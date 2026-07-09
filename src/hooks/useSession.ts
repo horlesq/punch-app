@@ -8,6 +8,8 @@ import { supabase } from '@/src/lib/supabase';
 export interface SessionState {
   /** Whether the initial session check is still loading. */
   isLoading: boolean;
+  /** Whether the profile is currently being fetched. */
+  isProfileLoading: boolean;
   /** The Supabase Auth session, or null if unauthenticated. */
   session: Session | null;
   /** The user's profile row (role, full_name, locale), or null if not yet loaded. */
@@ -20,6 +22,7 @@ export interface SessionState {
  */
 export function useSession(): SessionState {
   const [isLoading, setIsLoading] = useState(true);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
 
@@ -34,18 +37,22 @@ export function useSession(): SessionState {
           getProfile(initialSession.user.id)
             .then(({ data }) => {
               setProfile(data);
-              setIsLoading(false);
             })
             .catch((err) => {
               console.error('Failed to fetch profile:', err);
+            })
+            .finally(() => {
+              setIsProfileLoading(false);
               setIsLoading(false);
             });
         } else {
+          setIsProfileLoading(false);
           setIsLoading(false);
         }
       })
       .catch((err) => {
         console.error('Failed to get session:', err);
+        setIsProfileLoading(false);
         setIsLoading(false);
       });
 
@@ -56,11 +63,20 @@ export function useSession(): SessionState {
       setSession(newSession);
 
       if (newSession?.user) {
-        getProfile(newSession.user.id).then(({ data }) => {
-          setProfile(data);
-        });
+        setIsProfileLoading(true);
+        getProfile(newSession.user.id)
+          .then(({ data }) => {
+            setProfile(data);
+          })
+          .catch((err) => {
+             console.error('Auth state change profile fetch failed:', err);
+          })
+          .finally(() => {
+             setIsProfileLoading(false);
+          });
       } else {
         setProfile(null);
+        setIsProfileLoading(false);
       }
     });
 
@@ -69,5 +85,5 @@ export function useSession(): SessionState {
     };
   }, []);
 
-  return { isLoading, session, profile };
+  return { isLoading, isProfileLoading, session, profile };
 }
