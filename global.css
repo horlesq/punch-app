@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .text-headline-xl {
+    @apply font-geist-bold text-[40px] leading-[48px] tracking-[-0.02em];
+  }
+  .text-headline-lg {
+    @apply font-geist-semibold text-[32px] leading-[40px] tracking-[-0.01em];
+  }
+  .text-headline-lg-mobile {
+    @apply font-geist-semibold text-[28px] leading-[34px];
+  }
+  .text-headline-md {
+    @apply font-geist-semibold text-[24px] leading-[32px];
+  }
+  .text-body-lg {
+    @apply font-inter text-[18px] leading-[28px];
+  }
+  .text-body-md {
+    @apply font-inter text-[16px] leading-[24px];
+  }
+  .text-label-md {
+    @apply font-geist-medium text-[14px] leading-[20px] tracking-[0.05em];
+  }
+  .text-label-sm {
+    @apply font-geist-semibold text-[12px] leading-[16px];
+  }
+}
