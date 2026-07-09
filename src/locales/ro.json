@@ -1,0 +1,35 @@
+{
+  "common.loading": "Se încarcă…",
+  "common.error": "Ceva nu a funcționat",
+  "common.retry": "Reîncearcă",
+  "common.logOut": "Deconectare",
+
+  "auth.login.title": "Bine ai revenit",
+  "auth.login.emailLabel": "Email",
+  "auth.login.emailPlaceholder": "tu@exemplu.com",
+  "auth.login.passwordLabel": "Parolă",
+  "auth.login.passwordPlaceholder": "Parola ta",
+  "auth.login.submit": "Autentificare",
+  "auth.login.submitting": "Se autentifică…",
+  "auth.login.errorInvalidCredentials": "Email sau parolă invalidă",
+  "auth.login.errorGeneric": "Autentificarea a eșuat. Te rog încearcă din nou.",
+
+  "punch.title": "Pontaj",
+  "punch.clockIn": "Pontare intrare",
+  "punch.clockOut": "Pontare ieșire",
+  "punch.clockedInSince": "Pontat de la {{time}}",
+  "punch.notClockedIn": "Nu ești pontat",
+  "punch.errorGeneric": "Pontarea a eșuat. Te rog încearcă din nou.",
+
+  "tabs.employee.punch": "Pontaj",
+  "tabs.employee.history": "Istoric",
+  "tabs.employee.myPay": "Salariul meu",
+
+  "tabs.admin.dashboard": "Panou",
+  "tabs.admin.employees": "Angajați",
+  "tabs.admin.payPeriods": "Perioade de plată",
+  "tabs.admin.settings": "Setări",
+
+  "placeholder.title": "În curând",
+  "placeholder.message": "Acest ecran este în construcție."
+}

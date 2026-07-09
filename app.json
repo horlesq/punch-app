@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "punch-app-tmp",
-    "slug": "punch-app-tmp",
+    "name": "punch-app",
+    "slug": "punch-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "punchapptmp",
+    "scheme": "punchapp",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
@@ -21,7 +21,7 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [

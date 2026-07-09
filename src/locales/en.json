@@ -1,0 +1,35 @@
+{
+  "common.loading": "Loading…",
+  "common.error": "Something went wrong",
+  "common.retry": "Retry",
+  "common.logOut": "Log Out",
+
+  "auth.login.title": "Welcome Back",
+  "auth.login.emailLabel": "Email",
+  "auth.login.emailPlaceholder": "you@example.com",
+  "auth.login.passwordLabel": "Password",
+  "auth.login.passwordPlaceholder": "Your password",
+  "auth.login.submit": "Log In",
+  "auth.login.submitting": "Logging in…",
+  "auth.login.errorInvalidCredentials": "Invalid email or password",
+  "auth.login.errorGeneric": "Login failed. Please try again.",
+
+  "punch.title": "Punch",
+  "punch.clockIn": "Clock In",
+  "punch.clockOut": "Clock Out",
+  "punch.clockedInSince": "Clocked in since {{time}}",
+  "punch.notClockedIn": "You are not clocked in",
+  "punch.errorGeneric": "Punch failed. Please try again.",
+
+  "tabs.employee.punch": "Punch",
+  "tabs.employee.history": "History",
+  "tabs.employee.myPay": "My Pay",
+
+  "tabs.admin.dashboard": "Dashboard",
+  "tabs.admin.employees": "Employees",
+  "tabs.admin.payPeriods": "Pay Periods",
+  "tabs.admin.settings": "Settings",
+
+  "placeholder.title": "Coming Soon",
+  "placeholder.message": "This screen is under construction."
+}
