@@ -5,31 +5,31 @@ working first (auth → punch → data persists), then layer features on top. Th
 integration issues (Supabase config, Expo setup, auth) early, while they're cheap to fix.
 
 ## Phase 0 — Project Setup
-- [ ] Init Expo (TS) project, Expo Router, folder structure per ARCHITECTURE.md
-- [ ] Init Supabase project (or local Docker instance for dev)
-- [ ] Run initial migration: `profiles`, `punches` tables only (minimum for skeleton)
-- [ ] **Write RLS policies in the same migration as each table — not a later pass** (see
+- [x] Init Expo (TS) project, Expo Router, folder structure per ARCHITECTURE.md
+- [x] Init Supabase project (or local Docker instance for dev)
+- [x] Run initial migration: `profiles`, `punches` tables only (minimum for skeleton)
+- [x] **Write RLS policies in the same migration as each table — not a later pass** (see
   ARCHITECTURE.md Security section). Even for the skeleton's two tables.
-- [ ] Supabase client wired into app (`/src/lib/supabase.ts`)
-- [ ] i18n setup: `i18next`/`react-i18next` config, `/src/locales/en.json` with skeleton keys
-- [ ] Basic env config (.env for Supabase URL/key), `.env.example` committed
+- [x] Supabase client wired into app (`/src/lib/supabase.ts`)
+- [x] i18n setup: `i18next`/`react-i18next` config, `/src/locales/en.json` with skeleton keys
+- [x] Basic env config (.env for Supabase URL/key), `.env.example` committed
 
 ## Phase 1 — Walking Skeleton
-- [ ] Auth: login screen, Supabase Auth wired up, session persistence
-- [ ] Role-based routing: admin lands on admin tabs, employee lands on employee tabs
+- [x] Auth: login screen, Supabase Auth wired up, session persistence
+- [x] Role-based routing: admin lands on admin tabs, employee lands on employee tabs
   (role check can be hardcoded/manual at first — one seeded admin, one seeded employee)
-- [ ] **Layout-level role guard** on admin routes (redirect non-admins), not just hidden tabs
-- [ ] Employee Punch screen: punch in → writes row to `punches`, punch out → updates row
-- [ ] Punch status reflects correctly on screen reload (reads current open punch from DB)
-- [ ] Add `/src/locales/ro.json` as the second language to validate the i18n setup actually works
+- [x] **Layout-level role guard** on admin routes (redirect non-admins), not just hidden tabs
+- [x] Employee Punch screen: punch in → writes row to `punches`, punch out → updates row
+- [x] Punch status reflects correctly on screen reload (reads current open punch from DB)
+- [x] Add `/src/locales/ro.json` as the second language to validate the i18n setup actually works
 - **Goal: one employee can log in, punch in, punch out, and it's really in the database.**
 
 ## Phase 2 — Employee Core
-- [ ] History screen: list past punches for logged-in employee
-- [ ] Break deduction calculation (pure function in `payCalculations.ts`, unit tested)
-- [ ] My Pay screen: current week hours + pay (read-only, using employee's `hourly_rate`)
-- [ ] Missed punch correction: submit form (writes to `punch_corrections`)
-- [ ] Correction auto-approve path (simplest case — wire manual-approve in Phase 3)
+- [x] History screen: list past punches for logged-in employee
+- [x] Break deduction calculation (pure function in `payCalculations.ts`, unit tested)
+- [x] My Pay screen: current week hours + pay (read-only, using employee's `hourly_rate`)
+- [x] Missed punch correction: submit form (writes to `punch_corrections`)
+- [x] Correction auto-approve path (simplest case — wire manual-approve in Phase 3)
 - [ ] Language picker screen (profile/account settings), updates `profiles.locale`, applies
   immediately
 

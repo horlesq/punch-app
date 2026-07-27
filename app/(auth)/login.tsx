@@ -51,7 +51,7 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View className="flex-1 justify-center p-6">
-        <View className="p-8 rounded-[24px] bg-surface shadow-level-1">
+        <View className="p-8 rounded-[24px] bg-surface" style={{ shadowColor: 'rgba(15, 23, 42, 0.05)', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12, elevation: 2 }}>
           
           <View className="items-center mb-10">
             <View className="w-16 h-16 rounded-full items-center justify-center mb-6 bg-surface-container">
@@ -138,10 +138,13 @@ export default function LoginScreen() {
 
             {/* Submit button */}
             <Pressable
-              className={`items-center justify-center h-14 rounded-lg ${(!isFormValid || isSubmitting) ? 'bg-outline-variant' : 'bg-primary shadow-level-2'}`}
+              className={`items-center justify-center h-14 rounded-lg ${(!isFormValid || isSubmitting) ? 'bg-outline-variant' : 'bg-primary'}`}
               onPress={handleLogin}
               disabled={!isFormValid || isSubmitting}
-              style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.9 : 1,
+                ...(isFormValid && !isSubmitting ? { shadowColor: 'rgba(15, 23, 42, 0.12)', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 1, shadowRadius: 24, elevation: 4 } : {}),
+              })}
             >
               <Text className={`text-label-md ${(!isFormValid || isSubmitting) ? 'text-textSecondary' : 'text-on-primary'}`}>
                 {isSubmitting ? 'Signing In...' : 'Sign In'}

@@ -2,10 +2,11 @@ import React from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { Redirect, Tabs, Link } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { CustomTabBar } from '@/src/components/ui/CustomTabBar';
+import { CustomHeader } from '@/src/components/ui/CustomHeader';
 
 import { useAuth } from '@/app/_layout';
 import { colors } from '@/src/theme/colors';
@@ -37,15 +38,7 @@ export default function EmployeeLayout() {
     <Tabs
       tabBar={props => <CustomTabBar {...props} />}
       screenOptions={{
-        headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.textPrimary,
-        headerRight: () => (
-          <Link href="/profile" asChild>
-            <Pressable className="mr-4 active:opacity-70">
-              <Text className="text-primary font-geist-medium text-sm">Profile</Text>
-            </Pressable>
-          </Link>
-        ),
+        header: () => <CustomHeader title="Punch App" />,
       }}
     >
       <Tabs.Screen
@@ -53,7 +46,7 @@ export default function EmployeeLayout() {
         options={{
           title: t('tabs.employee.punch'),
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home-outline" size={size} color={color} />
+            <MaterialIcons name="punch-clock" size={size} color={color} />
           ),
         }}
       />
@@ -62,7 +55,7 @@ export default function EmployeeLayout() {
         options={{
           title: t('tabs.employee.history'),
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="clock-outline" size={size} color={color} />
+            <MaterialIcons name="history" size={size} color={color} />
           ),
         }}
       />
@@ -71,8 +64,16 @@ export default function EmployeeLayout() {
         options={{
           title: t('tabs.employee.myPay'),
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-outline" size={size} color={color} />
+            <MaterialIcons name="attach-money"  size={size} color={color} />
           ),
+        }}
+      />
+      {/* Hide the correction screen from the tab bar */}
+      <Tabs.Screen
+        name="correction"
+        options={{
+          href: null,
+          title: t('correction.title'),
         }}
       />
     </Tabs>

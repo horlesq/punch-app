@@ -69,3 +69,22 @@ export async function closePunch(
 
   return { data, error: null };
 }
+
+/**
+ * Fetch all punches for the given employee, ordered by clock_in_at descending.
+ */
+export async function getEmployeePunches(
+  employeeId: string,
+): Promise<{ data: Punch[]; error: Error | null }> {
+  const { data, error } = await supabase
+    .from('punches')
+    .select('*')
+    .eq('employee_id', employeeId)
+    .order('clock_in_at', { ascending: false });
+
+  if (error) {
+    return { data: [], error: new Error(error.message) };
+  }
+
+  return { data: data ?? [], error: null };
+}

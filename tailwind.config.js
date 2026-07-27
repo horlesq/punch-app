@@ -61,12 +61,12 @@ module.exports = {
         }
       },
       fontFamily: {
-        'geist': ['Geist_400Regular'],
-        'geist-medium': ['Geist_500Medium'],
-        'geist-semibold': ['Geist_600SemiBold'],
-        'geist-bold': ['Geist_700Bold'],
-        'inter': ['Inter_400Regular'],
-        'inter-medium': ['Inter_500Medium'],
+        'geist': 'Geist_400Regular',
+        'geist-medium': 'Geist_500Medium',
+        'geist-semibold': 'Geist_600SemiBold',
+        'geist-bold': 'Geist_700Bold',
+        'inter': 'Inter_400Regular',
+        'inter-medium': 'Inter_500Medium',
       },
       borderRadius: {
         sm: '0.25rem',
@@ -88,11 +88,6 @@ module.exports = {
         gutter: '16px',
         'margin-mobile': '20px',
       },
-      boxShadow: {
-        'level-0': 'none',
-        'level-1': '0px 4px 12px rgba(15, 23, 42, 0.05)',
-        'level-2': '0px 8px 24px rgba(15, 23, 42, 0.12)',
-      }
     },
   },
   plugins: [],

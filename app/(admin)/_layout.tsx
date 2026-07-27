@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { CustomTabBar } from '@/src/components/ui/CustomTabBar';
+import { CustomHeader } from '@/src/components/ui/CustomHeader';
 
 import { useAuth } from '@/app/_layout';
 import { colors } from '@/src/theme/colors';
@@ -38,15 +39,7 @@ export default function AdminLayout() {
     <Tabs
       tabBar={props => <CustomTabBar {...props} />}
       screenOptions={{
-        headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.textPrimary,
-        headerRight: () => (
-          <Link href="/profile" asChild>
-            <Pressable className="mr-4 active:opacity-70">
-              <Text className="text-primary font-geist-medium text-sm">Profile</Text>
-            </Pressable>
-          </Link>
-        ),
+        header: () => <CustomHeader title="Admin Overview" />,
       }}
     >
       <Tabs.Screen

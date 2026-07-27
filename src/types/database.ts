@@ -34,6 +34,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_settings: {
+        Row: {
+          id: string
+          business_name: string
+          logo_url: string | null
+          primary_color: string
+          accent_color: string | null
+          break_threshold_hours: number
+          break_duration_minutes: number
+          correction_approval_mode: string
+          timezone: string
+          enabled_features: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          business_name?: string
+          logo_url?: string | null
+          primary_color?: string
+          accent_color?: string | null
+          break_threshold_hours?: number
+          break_duration_minutes?: number
+          correction_approval_mode?: string
+          timezone?: string
+          enabled_features?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          business_name?: string
+          logo_url?: string | null
+          primary_color?: string
+          accent_color?: string | null
+          break_threshold_hours?: number
+          break_duration_minutes?: number
+          correction_approval_mode?: string
+          timezone?: string
+          enabled_features?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -63,6 +105,67 @@ export type Database = {
           role?: string
         }
         Relationships: []
+      }
+      punch_corrections: {
+        Row: {
+          id: string
+          punch_id: string | null
+          employee_id: string
+          requested_clock_in_at: string | null
+          requested_clock_out_at: string | null
+          reason: string | null
+          status: string
+          reviewed_by: string | null
+          reviewed_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          punch_id?: string | null
+          employee_id: string
+          requested_clock_in_at?: string | null
+          requested_clock_out_at?: string | null
+          reason?: string | null
+          status?: string
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          punch_id?: string | null
+          employee_id?: string
+          requested_clock_in_at?: string | null
+          requested_clock_out_at?: string | null
+          reason?: string | null
+          status?: string
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "punch_corrections_punch_id_fkey"
+            columns: ["punch_id"]
+            isOneToOne: false
+            referencedRelation: "punches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "punch_corrections_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "punch_corrections_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       punches: {
         Row: {
@@ -243,4 +346,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-
