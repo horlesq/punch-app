@@ -21,3 +21,22 @@ export async function getProfile(
 
   return { data, error: null };
 }
+
+/**
+ * Update the locale for a user profile.
+ */
+export async function updateProfileLocale(
+  userId: string,
+  locale: string,
+): Promise<{ error: Error | null }> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ locale })
+    .eq('id', userId);
+
+  if (error) {
+    return { error: new Error(error.message) };
+  }
+
+  return { error: null };
+}

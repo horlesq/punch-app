@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 
 import { getProfile, type Profile } from '@/src/api/profiles';
+import i18n from '@/src/lib/i18n';
 import { supabase } from '@/src/lib/supabase';
 
 export interface SessionState {
@@ -37,6 +38,9 @@ export function useSession(): SessionState {
           getProfile(initialSession.user.id)
             .then(({ data }) => {
               setProfile(data);
+              if (data?.locale) {
+                i18n.changeLanguage(data.locale);
+              }
             })
             .catch((err) => {
               console.error('Failed to fetch profile:', err);

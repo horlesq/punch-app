@@ -8,6 +8,10 @@
   "common.save": "Salvează",
   "common.close": "Închide",
 
+  "profile.language": "Limbă",
+  "profile.english": "English",
+  "profile.romanian": "Română",
+
   "auth.login.title": "Bine ai revenit",
   "auth.login.emailLabel": "Email",
   "auth.login.emailPlaceholder": "tu@exemplu.com",
@@ -31,15 +35,15 @@
   "punch.errorGeneric": "Pontarea a eșuat. Te rog încearcă din nou.",
 
   "history.title": "Istoric",
-  "history.empty": "Niciun tur înregistrat încă",
+  "history.empty": "Nicio tură înregistrată încă",
   "history.inProgress": "În desfășurare",
   "history.pendingCorrection": "În așteptarea aprobării",
   "history.hoursWorked": "{{hours}}h lucrate",
   "history.breakDeducted": "({{minutes}}min pauză dedusă)",
-  "history.reportMissedShift": "Raportează tur lipsă",
+  "history.reportMissedShift": "Raportează tură lipsă",
   "history.correctTimes": "Editează pontaj",
   "history.requested": "Solicitat:",
-  "history.errorLoading": "Nu s-a putut încărca istoricul tururilor.",
+  "history.errorLoading": "Nu s-a putut încărca istoricul turelor.",
 
   "myPay.title": "Salariul meu",
   "myPay.hourlyRate": "Tarif orar",
@@ -56,7 +60,7 @@
 
   "correction.title": "Raportare corecție",
   "correction.titleEdit": "Corectează orele",
-  "correction.titleMissed": "Raportează tur lipsă",
+  "correction.titleMissed": "Raportează tură lipsă",
   "correction.selectDate": "Data",
   "correction.clockInTime": "Ora de intrare",
   "correction.clockOutTime": "Ora de ieșire",
@@ -67,8 +71,8 @@
   "correction.success": "Corecția a fost trimisă cu succes",
   "correction.errorGeneric": "Trimiterea corecției a eșuat. Te rog încearcă din nou.",
   "correction.errorNoTimes": "Te rog introdu cel puțin o oră corectată.",
-  "correction.errorBothTimesRequired": "Te rog introdu atât ora de intrare cât și cea de ieșire pentru un tur lipsă.",
-  "correction.submitMissedShift": "Trimite tur lipsă",
+  "correction.errorBothTimesRequired": "Te rog introdu atât ora de intrare cât și cea de ieșire pentru o tură lipsă.",
+  "correction.submitMissedShift": "Trimite tura lipsă",
 
   "tabs.employee.punch": "Pontaj",
   "tabs.employee.history": "Istoric",

@@ -29,9 +29,8 @@ integration issues (Supabase config, Expo setup, auth) early, while they're chea
 - [x] Break deduction calculation (pure function in `payCalculations.ts`, unit tested)
 - [x] My Pay screen: current week hours + pay (read-only, using employee's `hourly_rate`)
 - [x] Missed punch correction: submit form (writes to `punch_corrections`)
-- [x] Correction auto-approve path (simplest case — wire manual-approve in Phase 3)
-- [ ] Language picker screen (profile/account settings), updates `profiles.locale`, applies
-  immediately
+- [x] Correction auto-approve path & manual-approve display flow
+- [x] Language picker screen (profile/account settings), updates `profiles.locale`, applies immediately
 
 ## Phase 3 — Admin Core
 - [ ] Migration: add `business_settings`, `punch_corrections`, `pay_periods`, `audit_log` tables

@@ -8,6 +8,10 @@
   "common.save": "Save",
   "common.close": "Close",
 
+  "profile.language": "Language",
+  "profile.english": "English",
+  "profile.romanian": "Română",
+
   "auth.login.title": "Welcome Back",
   "auth.login.emailLabel": "Email",
   "auth.login.emailPlaceholder": "you@example.com",
