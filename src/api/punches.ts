@@ -3,6 +3,11 @@ import type { Tables } from '@/src/types/database';
 
 export type Punch = Tables<'punches'>;
 
+/** A punch joined with the employee's full_name for admin views. */
+export interface PunchWithEmployee extends Punch {
+  employee_name: string;
+}
+
 /**
  * Get the currently-open (no clock_out_at) punch for an employee.
  * Returns null if the employee is not clocked in.
@@ -87,4 +92,32 @@ export async function getEmployeePunches(
   }
 
   return { data: data ?? [], error: null };
+}
+
+/**
+ * Fetch all currently open punches across all employees (admin dashboard).
+ * Returns punches joined with employee full_name.
+ */
+export async function getAllOpenPunches(): Promise<{
+  data: PunchWithEmployee[];
+  error: Error | null;
+}> {
+  const { data, error } = await supabase
+    .from('punches')
+    .select('*, profiles!punches_employee_id_fkey(full_name)')
+    .is('clock_out_at', null)
+    .order('clock_in_at', { ascending: true });
+
+  if (error) {
+    return { data: [], error: new Error(error.message) };
+  }
+
+  // Flatten the joined profile data
+  const result: PunchWithEmployee[] = (data ?? []).map((row: any) => ({
+    ...row,
+    employee_name: row.profiles?.full_name ?? '',
+    profiles: undefined,
+  }));
+
+  return { data: result, error: null };
 }

@@ -37,9 +37,16 @@ export function useSession(): SessionState {
         if (initialSession?.user) {
           getProfile(initialSession.user.id)
             .then(({ data }) => {
-              setProfile(data);
-              if (data?.locale) {
-                i18n.changeLanguage(data.locale);
+              if (data && data.is_active === false) {
+                // Deactivated employee: force sign out
+                supabase.auth.signOut();
+                setSession(null);
+                setProfile(null);
+              } else {
+                setProfile(data);
+                if (data?.locale) {
+                  i18n.changeLanguage(data.locale);
+                }
               }
             })
             .catch((err) => {
@@ -70,13 +77,20 @@ export function useSession(): SessionState {
         setIsProfileLoading(true);
         getProfile(newSession.user.id)
           .then(({ data }) => {
-            setProfile(data);
+            if (data && data.is_active === false) {
+              // Deactivated employee: force sign out
+              supabase.auth.signOut();
+              setSession(null);
+              setProfile(null);
+            } else {
+              setProfile(data);
+            }
           })
           .catch((err) => {
-             console.error('Auth state change profile fetch failed:', err);
+            console.error('Auth state change profile fetch failed:', err);
           })
           .finally(() => {
-             setIsProfileLoading(false);
+            setIsProfileLoading(false);
           });
       } else {
         setProfile(null);

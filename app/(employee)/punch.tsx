@@ -179,7 +179,7 @@ export default function PunchScreen() {
       {/* Header */}
       <View className="items-center mt-8 mb-10">
           <Text className="font-geist-bold text-2xl text-on-surface mb-1.5">
-            {getGreeting()}, {profile?.first_name}!
+            {getGreeting()}, {profile?.full_name?.split(' ')[0]}!
           </Text>
           <Text className="font-inter text-sm text-textSecondary font-medium">
             {formatCurrentDate()}  •  {formatCurrentTime()}

@@ -33,12 +33,12 @@ integration issues (Supabase config, Expo setup, auth) early, while they're chea
 - [x] Language picker screen (profile/account settings), updates `profiles.locale`, applies immediately
 
 ## Phase 3 — Admin Core
-- [ ] Migration: add `business_settings`, `punch_corrections`, `pay_periods`, `audit_log` tables
-- [ ] Admin: Employees screen — list, add employee (creates Supabase Auth user + profile),
+- [x] Migration: add `business_settings`, `punch_corrections`, `pay_periods`, `audit_log` tables
+- [x] Admin: Employees screen — list, add employee (creates Supabase Auth user + profile),
   set/edit hourly rate, deactivate
-- [ ] Admin: Dashboard — currently clocked in list
-- [ ] Admin: Corrections review — approve/reject pending corrections (manual-approve mode)
-- [ ] Wire `correction_approval_mode` setting to actually switch auto vs. manual behavior
+- [x] Admin: Dashboard — currently clocked in list
+- [x] Admin: Corrections review — approve/reject pending corrections (manual-approve mode)
+- [x] Wire `correction_approval_mode` setting to actually switch auto vs. manual behavior
 
 ## Phase 4 — Pay & Periods
 - [ ] Admin: Pay Periods screen — weekly table per employee, computed on-demand

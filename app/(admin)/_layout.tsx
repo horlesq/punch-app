@@ -1,7 +1,7 @@
 import React from 'react';
-import { ActivityIndicator, View, Pressable, Text } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
-import { Redirect, Tabs, Link } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
@@ -22,13 +22,10 @@ export default function AdminLayout() {
   if (isLoading || isProfileLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-surface">
-        <ActivityIndicator size="large" color="#000000" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
-
-  // If the profile fetch completed but failed, index.tsx will catch it and show an error/logout.
-  // We just want to avoid evaluating the role guard while still loading.
 
   // Role guard: non-admin users are redirected to the employee punch screen.
   if (profile?.role !== 'admin') {
@@ -39,7 +36,7 @@ export default function AdminLayout() {
     <Tabs
       tabBar={props => <CustomTabBar {...props} />}
       screenOptions={{
-        header: () => <CustomHeader title="Admin Overview" />,
+        header: () => <CustomHeader title={t('tabs.admin.dashboard')} />,
       }}
     >
       <Tabs.Screen
@@ -85,6 +82,10 @@ export default function AdminLayout() {
       />
       <Tabs.Screen
         name="corrections-review"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="add-employee"
         options={{ href: null }}
       />
     </Tabs>

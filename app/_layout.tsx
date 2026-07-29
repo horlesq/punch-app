@@ -28,6 +28,7 @@ SplashScreen.preventAutoHideAsync();
  */
 const AuthContext = createContext<SessionState>({
   isLoading: true,
+  isProfileLoading: true,
   session: null,
   profile: null,
 });
