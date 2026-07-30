@@ -3,6 +3,7 @@ import { ActivityIndicator, View, Text, Pressable } from 'react-native';
 
 import { useAuth } from '@/app/_layout';
 import { supabase } from '@/src/lib/supabase';
+import { RootAppSkeleton } from '@/src/components/ui/Skeleton';
 
 /**
  * Root index — redirects authenticated users to their role-appropriate route group.

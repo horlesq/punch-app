@@ -16,6 +16,7 @@ import { getEmployeePunches, type Punch } from '@/src/api/punches';
 import { getBusinessSettings } from '@/src/api/businessSettings';
 import { getEmployeePayPeriods } from '@/src/api/payPeriods';
 import { calculateWeekTotals } from '@/src/utils/payCalculations';
+import { MyPaySkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 /** Group shifts by ISO week (Mon–Sun). Returns weeks in reverse chronological order. */
@@ -224,11 +225,7 @@ export default function MyPayScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <MyPaySkeleton />;
   }
 
   if (errorMessage) {

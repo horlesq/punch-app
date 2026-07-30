@@ -9,6 +9,7 @@ import { CustomTabBar } from '@/src/components/ui/CustomTabBar';
 import { CustomHeader } from '@/src/components/ui/CustomHeader';
 
 import { useAuth } from '@/app/_layout';
+import { PunchSkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 /**
@@ -18,13 +19,11 @@ export default function EmployeeLayout() {
   const { t } = useTranslation();
   const { session, profile, isLoading, isProfileLoading } = useAuth();
 
-  // Wait until we actually have profile data before making role decisions.
-  // After login, session arrives instantly but profile fetch is async —
-  // without this guard we'd fall through and render employee tabs for admins.
+  // Show loading spinner after login while checking session & profile role
   if (isLoading || isProfileLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-surface">
-        <ActivityIndicator size="large" color="#000000" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }

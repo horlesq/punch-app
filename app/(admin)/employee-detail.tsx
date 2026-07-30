@@ -18,6 +18,7 @@ import { getProfile, updateEmployee, type ProfileWithEmail } from '@/src/api/pro
 import { getPendingCorrections } from '@/src/api/corrections';
 import { writeAuditEntry } from '@/src/api/auditLog';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
+import { EmployeeDetailSkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 export default function EmployeeDetailScreen() {
@@ -157,11 +158,7 @@ export default function EmployeeDetailScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <EmployeeDetailSkeleton />;
   }
 
   if (errorMessage && !employee) {

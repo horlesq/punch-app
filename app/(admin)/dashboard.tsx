@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 import { getAllOpenPunches, type PunchWithEmployee } from '@/src/api/punches';
 import { getPendingCorrectionsCount } from '@/src/api/corrections';
+import { DashboardSkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 export default function DashboardScreen() {
@@ -72,11 +73,7 @@ export default function DashboardScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (

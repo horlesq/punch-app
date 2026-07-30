@@ -23,6 +23,7 @@ import {
 } from '@/src/api/punches';
 import { getBusinessSettings } from '@/src/api/businessSettings';
 import { calculateShiftHours } from '@/src/utils/payCalculations';
+import { PunchSkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -163,11 +164,7 @@ export default function PunchScreen() {
   }
 
   if (isLoading && !openPunch && recentPunches.length === 0) {
-    return (
-      <View className="flex-1 justify-center items-center bg-surface">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <PunchSkeleton />;
   }
 
   return (

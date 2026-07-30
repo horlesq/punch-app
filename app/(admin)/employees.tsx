@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 import { getAllEmployees, type Profile } from '@/src/api/profiles';
 import { UserAvatar } from '@/src/components/ui/UserAvatar';
+import { EmployeesSkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 export default function EmployeesScreen() {
@@ -46,11 +47,7 @@ export default function EmployeesScreen() {
   );
 
   if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <EmployeesSkeleton />;
   }
 
   if (errorMessage) {

@@ -16,6 +16,7 @@ import { getEmployeePunches, type Punch } from '@/src/api/punches';
 import { getPendingCorrections, type PunchCorrection } from '@/src/api/corrections';
 import { getBusinessSettings } from '@/src/api/businessSettings';
 import { calculateShiftHours } from '@/src/utils/payCalculations';
+import { HistorySkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 export default function HistoryScreen() {
@@ -252,11 +253,7 @@ export default function HistoryScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <HistorySkeleton />;
   }
 
   if (errorMessage) {

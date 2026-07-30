@@ -23,6 +23,7 @@ import {
 } from '@/src/api/payPeriods';
 import { writeAuditEntry } from '@/src/api/auditLog';
 import { calculateWeekTotals } from '@/src/utils/payCalculations';
+import { PayPeriodsSkeleton } from '@/src/components/ui/Skeleton';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
 import { colors } from '@/src/theme/colors';
 
@@ -261,11 +262,7 @@ export default function PayPeriodsScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <PayPeriodsSkeleton />;
   }
 
   return (

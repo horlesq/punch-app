@@ -27,6 +27,7 @@ import {
   calculateWeekTotals,
 } from '@/src/utils/payCalculations';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
+import { PayPeriodDetailSkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 /** Format a date as YYYY-MM-DD. */
@@ -265,11 +266,7 @@ export default function PayPeriodDetailScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <PayPeriodDetailSkeleton />;
   }
 
   if (isFutureWeek) {

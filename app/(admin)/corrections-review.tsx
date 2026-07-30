@@ -19,6 +19,7 @@ import {
   type CorrectionWithEmployee,
 } from '@/src/api/corrections';
 import { writeAuditEntry } from '@/src/api/auditLog';
+import { CorrectionsReviewSkeleton } from '@/src/components/ui/Skeleton';
 import { colors } from '@/src/theme/colors';
 
 export default function CorrectionsReviewScreen() {
@@ -139,11 +140,7 @@ export default function CorrectionsReviewScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <CorrectionsReviewSkeleton />;
   }
 
   return (

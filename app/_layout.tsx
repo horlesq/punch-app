@@ -17,6 +17,7 @@ import {
 
 import { useSession, type SessionState } from '@/src/hooks/useSession';
 import '@/src/lib/i18n';
+import { RootAppSkeleton } from '@/src/components/ui/Skeleton';
 import '../global.css';
 
 // Prevent splash screen from auto-hiding
