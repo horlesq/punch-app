@@ -41,10 +41,10 @@ integration issues (Supabase config, Expo setup, auth) early, while they're chea
 - [x] Wire `correction_approval_mode` setting to actually switch auto vs. manual behavior
 
 ## Phase 4 — Pay & Periods
-- [ ] Admin: Pay Periods screen — weekly table per employee, computed on-demand
-- [ ] Mark week as Paid → snapshot into `pay_periods`, lock week
-- [ ] Unlock flow with confirmation + audit log entry
-- [ ] Admin: per-employee weekly breakdown drill-down view
+- [x] Admin: Pay Periods screen — weekly table per employee, computed on-demand
+- [x] Mark week as Paid → snapshot into `pay_periods`, lock week
+- [x] Unlock flow with confirmation + audit log entry
+- [x] Admin: per-employee weekly breakdown drill-down view
 
 ## Phase 5 — Branding / White-label
 - [ ] Admin: Settings — branding section (logo upload to Supabase Storage, color pickers)

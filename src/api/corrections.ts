@@ -1,5 +1,6 @@
 import { supabase } from '@/src/lib/supabase';
 import type { Tables, TablesUpdate } from '@/src/types/database';
+import { isWeekLockedForEmployee } from '@/src/api/payPeriods';
 
 export type PunchCorrection = Tables<'punch_corrections'>;
 
@@ -9,8 +10,40 @@ export interface CorrectionWithEmployee extends PunchCorrection {
 }
 
 /**
+ * Get the Monday (week start) date string for a given ISO date string.
+ * Used to check if a punch's week is locked before allowing corrections.
+ */
+function getWeekStartForDate(dateStr: string): string {
+  const cleanDateStr = dateStr.includes('T')
+    ? dateStr.split('T')[0]
+    : dateStr.includes(' ')
+    ? dateStr.split(' ')[0]
+    : dateStr;
+
+  const parts = cleanDateStr.split('-').map(Number);
+  if (parts.length === 3 && !parts.some(isNaN)) {
+    const [year, month, day] = parts;
+    const d = new Date(Date.UTC(year, month - 1, day));
+    const dayOfWeek = d.getUTCDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    d.setUTCDate(d.getUTCDate() + diff);
+    return d.toISOString().slice(0, 10);
+  }
+
+  const date = new Date(dateStr);
+  const day = date.getUTCDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  const monday = new Date(date);
+  monday.setUTCDate(date.getUTCDate() + diff);
+  return monday.toISOString().slice(0, 10);
+}
+
+/**
  * Create a new punch correction request.
  * If punch_id is null, this represents a fully missed shift (no existing punch row).
+ *
+ * Before inserting, checks if the punch's week has a locked pay_periods row.
+ * If locked, returns a clear error — does not insert.
  */
 export async function createCorrection(
   employeeId: string,
@@ -20,6 +53,43 @@ export async function createCorrection(
   reason?: string,
   status: 'pending' | 'approved' = 'pending',
 ): Promise<{ data: PunchCorrection | null; error: Error | null }> {
+  // 1. If editing an existing punch, check if original punch's week is locked
+  if (punchId) {
+    const { data: punch } = await supabase
+      .from('punches')
+      .select('clock_in_at, clock_out_at')
+      .eq('id', punchId)
+      .maybeSingle();
+
+    if (punch) {
+      const origDate = punch.clock_in_at ?? punch.clock_out_at;
+      if (origDate) {
+        const origWeekStart = getWeekStartForDate(origDate);
+        const { locked, error: lockError } = await isWeekLockedForEmployee(employeeId, origWeekStart);
+        if (lockError) return { data: null, error: lockError };
+        if (locked) return { data: null, error: new Error('WEEK_LOCKED') };
+      }
+    }
+  }
+
+  // 2. Check if requested date's week is locked
+  const dateForWeekCheck = requestedClockIn ?? requestedClockOut;
+  if (dateForWeekCheck) {
+    const weekStart = getWeekStartForDate(dateForWeekCheck);
+    const { locked, error: lockError } = await isWeekLockedForEmployee(employeeId, weekStart);
+
+    if (lockError) {
+      return { data: null, error: lockError };
+    }
+
+    if (locked) {
+      return {
+        data: null,
+        error: new Error('WEEK_LOCKED'),
+      };
+    }
+  }
+
   const { data, error } = await supabase
     .from('punch_corrections')
     .insert({

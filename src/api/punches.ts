@@ -121,3 +121,52 @@ export async function getAllOpenPunches(): Promise<{
 
   return { data: result, error: null };
 }
+
+/**
+ * Fetch all approved punches for an employee within a date range (inclusive).
+ * Used for per-employee weekly pay calculations.
+ */
+export async function getPunchesForEmployeeInWeek(
+  employeeId: string,
+  weekStart: string,
+  weekEnd: string,
+): Promise<{ data: Punch[]; error: Error | null }> {
+  const { data, error } = await supabase
+    .from('punches')
+    .select('*')
+    .eq('employee_id', employeeId)
+    .eq('status', 'approved')
+    .gte('clock_in_at', weekStart)
+    .lte('clock_in_at', weekEnd)
+    .order('clock_in_at', { ascending: true });
+
+  if (error) {
+    return { data: [], error: new Error(error.message) };
+  }
+
+  return { data: data ?? [], error: null };
+}
+
+/**
+ * Fetch all approved punches for all employees in a date range (admin-only).
+ * Used for the weekly pay table where totals are computed on-demand.
+ */
+export async function getPunchesForAllEmployeesInWeek(
+  weekStart: string,
+  weekEnd: string,
+): Promise<{ data: Punch[]; error: Error | null }> {
+  const { data, error } = await supabase
+    .from('punches')
+    .select('*')
+    .eq('status', 'approved')
+    .gte('clock_in_at', weekStart)
+    .lte('clock_in_at', weekEnd)
+    .order('clock_in_at', { ascending: true });
+
+  if (error) {
+    return { data: [], error: new Error(error.message) };
+  }
+
+  return { data: data ?? [], error: null };
+}
+

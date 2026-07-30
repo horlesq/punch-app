@@ -17,8 +17,22 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/app/_layout';
 import { createCorrection, applyCorrection } from '@/src/api/corrections';
+import { isWeekLockedForEmployee } from '@/src/api/payPeriods';
 import { getBusinessSettings } from '@/src/api/businessSettings';
 import { colors } from '@/src/theme/colors';
+
+function getWeekStartForDateString(dateStr: string): string {
+  const parts = dateStr.split('-').map(Number);
+  if (parts.length === 3 && !parts.some(isNaN)) {
+    const [year, month, day] = parts;
+    const d = new Date(Date.UTC(year, month - 1, day));
+    const dayOfWeek = d.getUTCDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    d.setUTCDate(d.getUTCDate() + diff);
+    return d.toISOString().slice(0, 10);
+  }
+  return dateStr;
+}
 
 export default function CorrectionScreen() {
   const { t } = useTranslation();
@@ -50,27 +64,34 @@ export default function CorrectionScreen() {
   }
 
   const punchId = params.punchId ?? null;
-  const initialDateStr = formatDateParam(params.date);
 
-  const [selectedDate, setSelectedDate] = useState(initialDateStr);
-
+  const [selectedDate, setSelectedDate] = useState(formatDateParam(params.date));
   const [clockInTime, setClockInTime] = useState(formatInitialTime(params.clockIn));
   const [clockOutTime, setClockOutTime] = useState(formatInitialTime(params.clockOut));
   const [reason, setReason] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isClockInVisible, setClockInVisibility] = useState(false);
   const [isClockOutVisible, setClockOutVisibility] = useState(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isWeekLocked, setIsWeekLocked] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
   const handleConfirmDate = (date: Date) => {
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    setSelectedDate(dateStr);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const newDateStr = `${yyyy}-${mm}-${dd}`;
+    setSelectedDate(newDateStr);
     hideDatePicker();
+
+    if (profile?.id) {
+      checkLockedWeek(profile.id, newDateStr);
+    }
   };
 
   const showClockInPicker = () => setClockInVisibility(true);
@@ -87,16 +108,32 @@ export default function CorrectionScreen() {
     hideClockOutPicker();
   };
 
+  async function checkLockedWeek(empId: string, dateStr: string) {
+    const weekStart = getWeekStartForDateString(dateStr);
+    const { locked } = await isWeekLockedForEmployee(empId, weekStart);
+    setIsWeekLocked(locked);
+    if (locked) {
+      setErrorMessage(t('correction.errorWeekLocked'));
+    } else {
+      setErrorMessage(null);
+    }
+  }
+
   // Reset state when navigation params change (because the screen is a kept-alive tab)
   useEffect(() => {
-    setSelectedDate(formatDateParam(params.date));
+    const initialDate = formatDateParam(params.date);
+    setSelectedDate(initialDate);
     setClockInTime(formatInitialTime(params.clockIn));
     setClockOutTime(formatInitialTime(params.clockOut));
     setReason('');
     setErrorMessage(null);
     setSuccessMessage(null);
     setIsSubmitting(false);
-  }, [params.punchId, params.date, params.clockIn, params.clockOut]);
+
+    if (profile?.id && initialDate) {
+      checkLockedWeek(profile.id, initialDate);
+    }
+  }, [params.punchId, params.date, params.clockIn, params.clockOut, profile?.id]);
 
   /**
    * Parse a time string (e.g. "08:30") into an ISO timestamp using the punch date.
@@ -118,6 +155,11 @@ export default function CorrectionScreen() {
 
   async function handleSubmit() {
     if (!profile) return;
+
+    if (isWeekLocked) {
+      setErrorMessage(t('correction.errorWeekLocked'));
+      return;
+    }
 
     let parsedClockIn = parseTimeInput(clockInTime);
     let parsedClockOut = parseTimeInput(clockOutTime);
@@ -161,7 +203,11 @@ export default function CorrectionScreen() {
     );
 
     if (createError || !correction) {
-      setErrorMessage(t('correction.errorGeneric'));
+      if (createError?.message === 'WEEK_LOCKED') {
+        setErrorMessage(t('correction.errorWeekLocked'));
+      } else {
+        setErrorMessage(t('correction.errorGeneric'));
+      }
       setIsSubmitting(false);
       return;
     }
@@ -359,17 +405,24 @@ export default function CorrectionScreen() {
 
         {/* Submit button */}
         <Pressable
-          className="bg-primary rounded-xl p-4 items-center active:opacity-80"
-          style={{ opacity: isSubmitting ? 0.6 : 1 }}
+          className={`rounded-xl p-4 items-center ${
+            isWeekLocked ? 'bg-surface-container-high' : 'bg-primary active:opacity-80'
+          }`}
+          style={{ opacity: isSubmitting || isWeekLocked ? 0.5 : 1 }}
           onPress={handleSubmit}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isWeekLocked}
         >
           {isSubmitting ? (
             <ActivityIndicator size="small" color={colors.textInverse} />
           ) : (
-            <Text className="text-on-primary font-geist-semibold text-base">
-              {punchId ? t('correction.submit') : t('correction.submitMissedShift')}
-            </Text>
+            <View className="flex-row items-center justify-center">
+              {isWeekLocked && (
+                <MaterialCommunityIcons name="lock-outline" size={18} color={colors.textSecondary} style={{ marginRight: 6 }} />
+              )}
+              <Text className={isWeekLocked ? 'text-on-surface-variant font-geist-semibold text-base' : 'text-on-primary font-geist-semibold text-base'}>
+                {punchId ? t('correction.submit') : t('correction.submitMissedShift')}
+              </Text>
+            </View>
           )}
         </Pressable>
 

@@ -51,7 +51,7 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View className="flex-1 justify-center p-6">
-        <View className="p-8 rounded-[24px] bg-surface" style={{ shadowColor: 'rgba(15, 23, 42, 0.05)', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12, elevation: 2 }}>
+        <View className="p-8 rounded-[24px] bg-surface">
           
           <View className="items-center mb-10">
             <View className="w-16 h-16 rounded-full items-center justify-center mb-6 bg-surface-container">

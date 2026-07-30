@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -36,34 +36,34 @@ export type Database = {
     Tables: {
       audit_log: {
         Row: {
-          id: string
-          actor_id: string
           action: string
-          entity_type: string
-          entity_id: string
-          old_value: Json | null
-          new_value: Json | null
+          actor_id: string
           created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          new_value: Json | null
+          old_value: Json | null
         }
         Insert: {
-          id?: string
-          actor_id: string
           action: string
-          entity_type: string
-          entity_id: string
-          old_value?: Json | null
-          new_value?: Json | null
+          actor_id: string
           created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
         }
         Update: {
-          id?: string
-          actor_id?: string
           action?: string
-          entity_type?: string
-          entity_id?: string
-          old_value?: Json | null
-          new_value?: Json | null
+          actor_id?: string
           created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
         }
         Relationships: [
           {
@@ -77,45 +77,92 @@ export type Database = {
       }
       business_settings: {
         Row: {
-          id: string
+          accent_color: string | null
+          break_duration_minutes: number
+          break_threshold_hours: number
           business_name: string
+          correction_approval_mode: string
+          created_at: string
+          enabled_features: Json
+          id: string
           logo_url: string | null
           primary_color: string
-          accent_color: string | null
-          break_threshold_hours: number
-          break_duration_minutes: number
-          correction_approval_mode: string
           timezone: string
-          enabled_features: Json
-          created_at: string
         }
         Insert: {
-          id?: string
+          accent_color?: string | null
+          break_duration_minutes?: number
+          break_threshold_hours?: number
           business_name?: string
+          correction_approval_mode?: string
+          created_at?: string
+          enabled_features?: Json
+          id?: string
           logo_url?: string | null
           primary_color?: string
-          accent_color?: string | null
-          break_threshold_hours?: number
-          break_duration_minutes?: number
-          correction_approval_mode?: string
           timezone?: string
-          enabled_features?: Json
-          created_at?: string
         }
         Update: {
-          id?: string
+          accent_color?: string | null
+          break_duration_minutes?: number
+          break_threshold_hours?: number
           business_name?: string
+          correction_approval_mode?: string
+          created_at?: string
+          enabled_features?: Json
+          id?: string
           logo_url?: string | null
           primary_color?: string
-          accent_color?: string | null
-          break_threshold_hours?: number
-          break_duration_minutes?: number
-          correction_approval_mode?: string
           timezone?: string
-          enabled_features?: Json
-          created_at?: string
         }
         Relationships: []
+      }
+      pay_periods: {
+        Row: {
+          created_at: string
+          employee_id: string
+          id: string
+          is_paid: boolean
+          locked: boolean
+          paid_at: string | null
+          total_hours: number
+          total_pay: number
+          week_end_date: string
+          week_start_date: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          id?: string
+          is_paid?: boolean
+          locked?: boolean
+          paid_at?: string | null
+          total_hours?: number
+          total_pay?: number
+          week_end_date: string
+          week_start_date: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          id?: string
+          is_paid?: boolean
+          locked?: boolean
+          paid_at?: string | null
+          total_hours?: number
+          total_pay?: number
+          week_end_date?: string
+          week_start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pay_periods_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -149,54 +196,54 @@ export type Database = {
       }
       punch_corrections: {
         Row: {
+          created_at: string
+          employee_id: string
           id: string
           punch_id: string | null
-          employee_id: string
+          reason: string | null
           requested_clock_in_at: string | null
           requested_clock_out_at: string | null
-          reason: string | null
-          status: string
-          reviewed_by: string | null
           reviewed_at: string | null
-          created_at: string
+          reviewed_by: string | null
+          status: string
         }
         Insert: {
+          created_at?: string
+          employee_id: string
           id?: string
           punch_id?: string | null
-          employee_id: string
+          reason?: string | null
           requested_clock_in_at?: string | null
           requested_clock_out_at?: string | null
-          reason?: string | null
-          status?: string
-          reviewed_by?: string | null
           reviewed_at?: string | null
-          created_at?: string
+          reviewed_by?: string | null
+          status?: string
         }
         Update: {
+          created_at?: string
+          employee_id?: string
           id?: string
           punch_id?: string | null
-          employee_id?: string
+          reason?: string | null
           requested_clock_in_at?: string | null
           requested_clock_out_at?: string | null
-          reason?: string | null
-          status?: string
-          reviewed_by?: string | null
           reviewed_at?: string | null
-          created_at?: string
+          reviewed_by?: string | null
+          status?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "punch_corrections_punch_id_fkey"
-            columns: ["punch_id"]
-            isOneToOne: false
-            referencedRelation: "punches"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "punch_corrections_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "punch_corrections_punch_id_fkey"
+            columns: ["punch_id"]
+            isOneToOne: false
+            referencedRelation: "punches"
             referencedColumns: ["id"]
           },
           {
@@ -251,7 +298,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
@@ -387,3 +434,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

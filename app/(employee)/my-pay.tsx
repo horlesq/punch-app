@@ -14,6 +14,7 @@ import { useFocusEffect } from 'expo-router';
 import { useAuth } from '@/app/_layout';
 import { getEmployeePunches, type Punch } from '@/src/api/punches';
 import { getBusinessSettings } from '@/src/api/businessSettings';
+import { getEmployeePayPeriods } from '@/src/api/payPeriods';
 import { calculateWeekTotals } from '@/src/utils/payCalculations';
 import { colors } from '@/src/theme/colors';
 
@@ -66,6 +67,7 @@ interface WeekData {
   totalHours: number;
   totalPay: number;
   isCurrent: boolean;
+  isPaid: boolean;
 }
 
 export default function MyPayScreen() {
@@ -86,9 +88,10 @@ export default function MyPayScreen() {
     setIsLoading(true);
     setErrorMessage(null);
 
-    const [punchesResult, settingsResult] = await Promise.all([
+    const [punchesResult, settingsResult, payPeriodsResult] = await Promise.all([
       getEmployeePunches(profile.id),
       getBusinessSettings(),
+      getEmployeePayPeriods(profile.id),
     ]);
 
     if (punchesResult.error) {
@@ -107,20 +110,40 @@ export default function MyPayScreen() {
       setBreakDuration(duration);
     }
 
+    const payPeriodsMap = new Map(
+      (payPeriodsResult.data ?? []).map((pp) => [pp.week_start_date, pp])
+    );
+
     const grouped = groupByWeek(punchesResult.data);
     const weekData: WeekData[] = grouped.map((group) => {
-      const { totalHours, totalPay } = calculateWeekTotals(
-        group.shifts,
-        hourlyRate,
-        threshold,
-        duration,
-      );
+      const weekStartStr = group.weekStart.toISOString().slice(0, 10);
+      const pp = payPeriodsMap.get(weekStartStr);
+      const isPaid = (pp?.locked && pp?.is_paid) ?? false;
+
+      let totalHours: number;
+      let totalPay: number;
+
+      if (isPaid && pp) {
+        totalHours = pp.total_hours;
+        totalPay = pp.total_pay;
+      } else {
+        const totals = calculateWeekTotals(
+          group.shifts,
+          hourlyRate,
+          threshold,
+          duration,
+        );
+        totalHours = totals.totalHours;
+        totalPay = totals.totalPay;
+      }
+
       return {
         weekStart: group.weekStart,
         weekEnd: group.weekEnd,
         totalHours,
         totalPay,
         isCurrent: isCurrentWeek(group.weekStart),
+        isPaid,
       };
     });
 
@@ -160,9 +183,17 @@ export default function MyPayScreen() {
               ? t('myPay.currentWeek')
               : t('myPay.weekOf', { date: formatWeekDate(item.weekStart) })}
           </Text>
-          <View className="bg-on-surface/10 rounded-full px-3 py-1">
-            <Text className="text-on-surface font-geist-medium text-xs">
-              {t('myPay.unpaid')}
+          <View
+            className={`rounded-full px-3 py-1 ${
+              item.isPaid ? 'bg-success/15' : 'bg-on-surface/10'
+            }`}
+          >
+            <Text
+              className={`font-geist-semibold text-xs ${
+                item.isPaid ? 'text-success' : 'text-on-surface'
+              }`}
+            >
+              {item.isPaid ? t('myPay.paid') : t('myPay.unpaid')}
             </Text>
           </View>
         </View>
