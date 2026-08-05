@@ -14,15 +14,16 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/app/_layout';
+import { useTheme } from '@/src/theme/ThemeProvider';
 import { getProfile, updateEmployee, type ProfileWithEmail } from '@/src/api/profiles';
 import { getPendingCorrections } from '@/src/api/corrections';
 import { writeAuditEntry } from '@/src/api/auditLog';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
 import { EmployeeDetailSkeleton } from '@/src/components/ui/Skeleton';
-import { colors } from '@/src/theme/colors';
 
 export default function EmployeeDetailScreen() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const router = useRouter();
   const { employeeId } = useLocalSearchParams<{ employeeId: string }>();
   const { profile: adminProfile } = useAuth();
@@ -166,7 +167,7 @@ export default function EmployeeDetailScreen() {
       <View className="flex-1 justify-center items-center bg-background px-6">
         <Text className="text-error text-center mb-4">{errorMessage}</Text>
         <Pressable onPress={() => router.back()} className="active:opacity-70">
-          <Text style={{ color: colors.accent }} className="font-geist-semibold">
+          <Text style={{ color: theme.accent }} className="font-geist-semibold">
             {t('common.cancel')}
           </Text>
         </Pressable>
@@ -191,16 +192,16 @@ export default function EmployeeDetailScreen() {
           className="bg-warning/10 rounded-xl p-4 mb-6 flex-row items-center active:opacity-80"
           onPress={() => router.push('/(admin)/corrections-review')}
         >
-          <MaterialCommunityIcons name="alert-circle-outline" size={20} color={colors.warning} />
+          <MaterialCommunityIcons name="alert-circle-outline" size={20} color={theme.warning} />
           <View className="flex-1 ml-3">
-            <Text style={{ color: colors.warning }} className="font-geist-medium text-sm">
+            <Text style={{ color: theme.warning }} className="font-geist-medium text-sm">
               {t('admin.employeeDetail.pendingCorrections')}
             </Text>
-            <Text style={{ color: colors.warning }} className="font-inter text-xs mt-0.5">
+            <Text style={{ color: theme.warning }} className="font-inter text-xs mt-0.5">
               {t('admin.employeeDetail.viewCorrections')}
             </Text>
           </View>
-          <MaterialCommunityIcons name="chevron-right" size={20} color={colors.warning} />
+          <MaterialCommunityIcons name="chevron-right" size={20} color={theme.warning} />
         </Pressable>
       )}
 
@@ -215,9 +216,8 @@ export default function EmployeeDetailScreen() {
           }`}
         >
           <Text
-            className={`font-geist-semibold text-sm ${
-              employee.is_active ? 'text-success' : 'text-error'
-            }`}
+            style={{ color: employee.is_active ? theme.success : theme.error }}
+            className="font-geist-semibold text-sm"
           >
             {employee.is_active
               ? t('admin.employeeDetail.active')
@@ -249,7 +249,7 @@ export default function EmployeeDetailScreen() {
           className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
           value={editName}
           onChangeText={setEditName}
-          placeholderTextColor={colors.textSecondary}
+          placeholderTextColor={theme.textSecondary}
         />
       </View>
 
@@ -263,13 +263,13 @@ export default function EmployeeDetailScreen() {
           value={editRate}
           onChangeText={setEditRate}
           keyboardType="decimal-pad"
-          placeholderTextColor={colors.textSecondary}
+          placeholderTextColor={theme.textSecondary}
         />
       </View>
 
       {/* Success / Error Messages */}
       {successMessage && (
-        <Text className="text-success text-center text-sm mb-4">{successMessage}</Text>
+        <Text style={{ color: theme.success }} className="text-center text-sm mb-4">{successMessage}</Text>
       )}
       {errorMessage && (
         <Text className="text-error text-center text-sm mb-4">{errorMessage}</Text>
@@ -277,15 +277,15 @@ export default function EmployeeDetailScreen() {
 
       {/* Save Button */}
       <Pressable
-        className="bg-primary rounded-xl p-4 items-center active:opacity-80 mb-4"
-        style={{ opacity: isSaving ? 0.6 : 1 }}
+        className="rounded-xl p-4 items-center active:opacity-80 mb-4"
+        style={{ backgroundColor: theme.primary, opacity: isSaving ? 0.6 : 1 }}
         onPress={handleSave}
         disabled={isSaving}
       >
         {isSaving ? (
-          <ActivityIndicator size="small" color={colors.textInverse} />
+          <ActivityIndicator size="small" color={theme.textInverse} />
         ) : (
-          <Text className="text-on-primary font-geist-semibold text-base">
+          <Text style={{ color: theme.textInverse }} className="font-geist-semibold text-base">
             {t('common.save')}
           </Text>
         )}
@@ -299,9 +299,8 @@ export default function EmployeeDetailScreen() {
         onPress={() => setShowToggleModal(true)}
       >
         <Text
-          className={`font-geist-semibold text-base ${
-            employee.is_active ? 'text-error' : 'text-success'
-          }`}
+          style={{ color: employee.is_active ? theme.error : theme.success }}
+          className="font-geist-semibold text-base"
         >
           {employee.is_active
             ? t('admin.employeeDetail.deactivate')
@@ -314,7 +313,7 @@ export default function EmployeeDetailScreen() {
         className="mt-4 items-center active:opacity-60"
         onPress={() => router.back()}
       >
-        <Text style={{ color: colors.accent }} className="font-geist-medium text-sm">
+        <Text style={{ color: theme.accent }} className="font-geist-medium text-sm">
           {t('common.cancel')}
         </Text>
       </Pressable>

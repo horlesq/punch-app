@@ -14,6 +14,7 @@ import { useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useAuth } from '@/app/_layout';
+import { useTheme } from '@/src/theme/ThemeProvider';
 import {
   closePunch,
   createPunch,
@@ -24,13 +25,13 @@ import {
 import { getBusinessSettings } from '@/src/api/businessSettings';
 import { calculateShiftHours } from '@/src/utils/payCalculations';
 import { PunchSkeleton } from '@/src/components/ui/Skeleton';
-import { colors } from '@/src/theme/colors';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function PunchScreen() {
   const { t } = useTranslation();
   const { profile } = useAuth();
+  const { theme } = useTheme();
   const router = useRouter();
 
   const [openPunch, setOpenPunch] = useState<Punch | null>(null);
@@ -169,16 +170,17 @@ export default function PunchScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-surface"
+      style={{ backgroundColor: theme.background }}
+      className="flex-1"
       contentContainerStyle={{ alignItems: 'center', paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
     >
       {/* Header */}
       <View className="items-center mt-8 mb-10">
-          <Text className="font-geist-bold text-2xl text-on-surface mb-1.5">
+          <Text style={{ color: theme.textPrimary }} className="font-geist-bold text-2xl mb-1.5">
             {getGreeting()}, {profile?.full_name?.split(' ')[0]}!
           </Text>
-          <Text className="font-inter text-sm text-textSecondary font-medium">
+          <Text style={{ color: theme.textSecondary }} className="font-inter text-sm font-medium">
             {formatCurrentDate()}  •  {formatCurrentTime()}
           </Text>
         </View>
@@ -186,12 +188,10 @@ export default function PunchScreen() {
       {/* Punch Button & Status */}
       <View className="items-center w-full mb-12">
         <Pressable
-          className={`w-[260px] h-[260px] rounded-full justify-center items-center ${
-            isClockedIn ? 'bg-error' : 'bg-on-surface'
-          }`}
+          className="w-[260px] h-[260px] rounded-full justify-center items-center"
           style={({ pressed }) => ({
             opacity: pressed || isSubmitting ? 0.85 : 1,
-            backgroundColor: isClockedIn ? colors.error : '#000000',
+            backgroundColor: isClockedIn ? theme.error : theme.primary,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.25,
@@ -201,16 +201,16 @@ export default function PunchScreen() {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <ActivityIndicator size="large" color="#FFFFFF" />
+            <ActivityIndicator size="large" color="#ffffff" />
           ) : (
             <>
               <MaterialCommunityIcons
                 name={isClockedIn ? 'stop-circle-outline' : 'gesture-tap-button'}
                 size={56}
-                color="#FFFFFF"
+                color="#ffffff"
                 className="mb-2"
               />
-              <Text className="font-geist-bold text-white text-xl tracking-wider">
+              <Text style={{ color: '#ffffff' }} className="font-geist-bold text-xl tracking-wider">
                 {isClockedIn ? t('punch.clockOut') : t('punch.clockIn')}
               </Text>
             </>
@@ -219,26 +219,27 @@ export default function PunchScreen() {
 
         {/* Status Pill */}
         <View 
-          className="flex-row items-center bg-surface-container-lowest px-6 py-3.5 rounded-full mt-10"
+          className="flex-row items-center px-6 py-3.5 rounded-full mt-10"
           style={{
+            backgroundColor: theme.surfaceContainerLowest,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.05,
             shadowRadius: 5,
             elevation: 2,
             borderWidth: 1,
-            borderColor: 'rgba(0,0,0,0.05)',
+            borderColor: theme.borderLight,
           }}
         >
-          <View className={`w-2.5 h-2.5 rounded-full mr-2.5 ${isClockedIn ? 'bg-success' : 'bg-outline'}`} />
-          <Text className="font-inter font-semibold text-xs tracking-wider text-textSecondary">
+          <View style={{ backgroundColor: isClockedIn ? theme.success : theme.textSecondary }} className="w-2.5 h-2.5 rounded-full mr-2.5" />
+          <Text style={{ color: theme.textSecondary }} className="font-inter font-semibold text-xs tracking-wider">
             {isClockedIn ? t('punch.status.onTheClock') : t('punch.status.offTheClock')}
           </Text>
         </View>
 
         {/* Error message */}
         {errorMessage && (
-          <Text className="mt-4 text-center text-error text-sm px-6">
+          <Text style={{ color: theme.error }} className="mt-4 text-center text-sm px-6">
             {errorMessage}
           </Text>
         )}
@@ -247,11 +248,11 @@ export default function PunchScreen() {
       {/* Recent Activity */}
       <View className="w-full px-6 max-w-lg">
         <View className="flex-row justify-between items-end mb-4">
-          <Text className="font-geist-bold text-xl text-on-surface">
+          <Text style={{ color: theme.textPrimary }} className="font-geist-bold text-xl">
             {t('punch.recentActivity')}
           </Text>
           <Pressable onPress={() => router.push('/(employee)/history')} className="active:opacity-60 mb-0.5">
-            <Text className="font-geist-bold text-sm text-primary tracking-wide">
+            <Text style={{ color: theme.accent }} className="font-geist-bold text-sm tracking-wide">
               {t('punch.viewAll')}
             </Text>
           </Pressable>
@@ -259,20 +260,21 @@ export default function PunchScreen() {
 
         {/* Activity List Container */}
         <View 
-          className="bg-surface-container-lowest rounded-2xl overflow-hidden"
+          className="rounded-2xl overflow-hidden"
           style={{
+            backgroundColor: theme.surfaceContainerLowest,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.05,
             shadowRadius: 8,
             elevation: 2,
             borderWidth: 1,
-            borderColor: 'rgba(0,0,0,0.04)',
+            borderColor: theme.borderLight,
           }}
         >
           {recentPunches.length === 0 ? (
             <View className="p-8 items-center">
-              <Text className="text-textSecondary font-inter text-sm">
+              <Text style={{ color: theme.textSecondary }} className="font-inter text-sm">
                 No recent activity
               </Text>
             </View>
@@ -288,24 +290,28 @@ export default function PunchScreen() {
               return (
                 <View
                   key={punch.id}
+                  style={{ borderBottomColor: theme.borderLight }}
                   className={`flex-row items-center justify-between p-4 px-5 ${
-                    index < recentPunches.length - 1 ? 'border-b border-outline-variant/30' : ''
+                    index < recentPunches.length - 1 ? 'border-b' : ''
                   }`}
                 >
                   <View className="flex-row items-center flex-1">
-                    <View className="w-10 h-10 rounded-full bg-surface-container justify-center items-center mr-3.5">
-                      <MaterialCommunityIcons name="clock-outline" size={20} color={colors.textSecondary} />
+                    <View
+                      style={{ backgroundColor: theme.surfaceVariant }}
+                      className="w-10 h-10 rounded-full justify-center items-center mr-3.5"
+                    >
+                      <MaterialCommunityIcons name="clock-outline" size={20} color={theme.textSecondary} />
                     </View>
                     <View>
-                      <Text className="font-geist-semibold text-[15px] text-on-surface mb-0.5">
+                      <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-[15px] mb-0.5">
                         {formatPunchRowDate(punch.clock_in_at)}
                       </Text>
-                      <Text className="font-inter text-xs text-textSecondary font-medium">
+                      <Text style={{ color: theme.textSecondary }} className="font-inter text-xs font-medium">
                         {formatPunchRowTime(punch.clock_in_at)} - {formatPunchRowTime(punch.clock_out_at!)}
                       </Text>
                     </View>
                   </View>
-                  <Text className="font-geist-medium text-sm text-on-surface">
+                  <Text style={{ color: theme.textPrimary }} className="font-geist-medium text-sm">
                     {hours}h {minutes.toString().padStart(2, '0')}m
                   </Text>
                 </View>

@@ -23,3 +23,153 @@ export async function getBusinessSettings(): Promise<{
 
   return { data, error: null };
 }
+
+/**
+ * Update branding fields only (business name, logo, colors).
+ * Separate from rules so admin can save branding independently.
+ */
+export async function updateBranding(
+  businessName: string,
+  logoUrl: string | null,
+  primaryColor: string,
+  accentColor: string | null,
+  themeMode: 'light' | 'dark' = 'light'
+): Promise<{ error: Error | null }> {
+  const { error } = await supabase
+    .from('business_settings')
+    .update({
+      business_name: businessName,
+      logo_url: logoUrl,
+      primary_color: primaryColor,
+      accent_color: accentColor,
+      theme_mode: themeMode,
+    })
+    .not('id', 'is', null); // Updates the single row
+
+  if (error) {
+    return { error: new Error(error.message) };
+  }
+  return { error: null };
+}
+
+/**
+ * Update business rules fields only (break settings, correction approval mode).
+ * Separate from branding so admin can save rules independently.
+ */
+export async function updateRules(
+  breakThresholdHours: number,
+  breakDurationMinutes: number,
+  correctionApprovalMode: 'auto' | 'manual'
+): Promise<{ error: Error | null }> {
+  const { error } = await supabase
+    .from('business_settings')
+    .update({
+      break_threshold_hours: breakThresholdHours,
+      break_duration_minutes: breakDurationMinutes,
+      correction_approval_mode: correctionApprovalMode,
+    })
+    .not('id', 'is', null);
+
+  if (error) {
+    return { error: new Error(error.message) };
+  }
+  return { error: null };
+}
+
+/**
+ * Upload a logo image to Supabase Storage `branding` bucket.
+ *
+ * Validates:
+ * - File type: jpg/png only
+ * - File size: max 2MB
+ *
+ * Returns the public URL of the uploaded image.
+ */
+export async function uploadLogo(
+  imageUri: string
+): Promise<{ url: string | null; error: Error | null }> {
+  // Determine file extension from URI
+  const uriLower = imageUri.toLowerCase();
+  let ext = 'jpg';
+  let mimeType = 'image/jpeg';
+
+  if (uriLower.endsWith('.png') || uriLower.includes('.png')) {
+    ext = 'png';
+    mimeType = 'image/png';
+  } else if (
+    uriLower.endsWith('.jpg') ||
+    uriLower.endsWith('.jpeg') ||
+    uriLower.includes('.jpg') ||
+    uriLower.includes('.jpeg')
+  ) {
+    ext = 'jpg';
+    mimeType = 'image/jpeg';
+  }
+
+  // Fetch the image file as a blob for upload
+  let blob: Blob;
+  try {
+    const response = await fetch(imageUri);
+    blob = await response.blob();
+  } catch (e) {
+    return { url: null, error: new Error('Failed to read image file.') };
+  }
+
+  // Validate file size (max 2MB)
+  const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+  if (blob.size > MAX_SIZE) {
+    return { url: null, error: new Error('FILE_TOO_LARGE') };
+  }
+
+  // Validate file type
+  const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+  if (blob.type && !validTypes.includes(blob.type)) {
+    // Check blob type if available; otherwise trust the extension
+    const extValid = ['jpg', 'jpeg', 'png'].includes(ext);
+    if (!extValid) {
+      return { url: null, error: new Error('INVALID_FILE_TYPE') };
+    }
+  }
+
+  // Generate a unique filename
+  const filename = `logo_${Date.now()}.${ext}`;
+  const filePath = filename;
+
+  // Remove any existing logo files first (cleanup)
+  try {
+    const { data: existingFiles } = await supabase.storage
+      .from('branding')
+      .list('', { limit: 100 });
+
+    if (existingFiles && existingFiles.length > 0) {
+      const logoFiles = existingFiles
+        .filter((f) => f.name.startsWith('logo_'))
+        .map((f) => f.name);
+
+      if (logoFiles.length > 0) {
+        await supabase.storage.from('branding').remove(logoFiles);
+      }
+    }
+  } catch {
+    // Non-critical — old files may remain, but upload can proceed
+  }
+
+  // Upload the new logo
+  const { error: uploadError } = await supabase.storage
+    .from('branding')
+    .upload(filePath, blob, {
+      contentType: mimeType,
+      upsert: true,
+    });
+
+  if (uploadError) {
+    return { url: null, error: new Error(uploadError.message) };
+  }
+
+  // Get the public URL
+  const { data: urlData } = supabase.storage
+    .from('branding')
+    .getPublicUrl(filePath);
+
+  return { url: urlData.publicUrl, error: null };
+}

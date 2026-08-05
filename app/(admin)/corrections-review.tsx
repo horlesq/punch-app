@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/app/_layout';
+import { useTheme } from '@/src/theme/ThemeProvider';
 import {
   getAllPendingCorrections,
   applyCorrection,
@@ -20,11 +21,11 @@ import {
 } from '@/src/api/corrections';
 import { writeAuditEntry } from '@/src/api/auditLog';
 import { CorrectionsReviewSkeleton } from '@/src/components/ui/Skeleton';
-import { colors } from '@/src/theme/colors';
 
 export default function CorrectionsReviewScreen() {
   const { t } = useTranslation();
   const { profile: adminProfile } = useAuth();
+  const { theme } = useTheme();
 
   const [corrections, setCorrections] = useState<CorrectionWithEmployee[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,21 +146,22 @@ export default function CorrectionsReviewScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-background"
+      style={{ backgroundColor: theme.background }}
+      className="flex-1"
       contentContainerStyle={{ paddingTop: 16, paddingBottom: 32 }}
     >
-      <Text className="text-on-surface font-geist-semibold text-2xl mb-6 mx-4">
+      <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-2xl mb-6 mx-4">
         {t('admin.corrections.title')}
       </Text>
 
       {errorMessage && (
-        <Text className="text-error text-center text-sm mb-4 mx-4">{errorMessage}</Text>
+        <Text style={{ color: theme.error }} className="text-center text-sm mb-4 mx-4">{errorMessage}</Text>
       )}
 
       {corrections.length === 0 ? (
         <View className="flex-1 justify-center items-center pt-20">
-          <MaterialCommunityIcons name="check-circle-outline" size={48} color={colors.textSecondary} />
-          <Text className="text-on-surface-variant text-base mt-4">
+          <MaterialCommunityIcons name="check-circle-outline" size={48} color={theme.textSecondary} />
+          <Text style={{ color: theme.textSecondary }} className="text-base mt-4">
             {t('admin.corrections.empty')}
           </Text>
         </View>
@@ -171,8 +173,10 @@ export default function CorrectionsReviewScreen() {
           return (
             <View
               key={correction.id}
-              className="bg-surface-container-lowest rounded-xl mx-4 mb-3 p-4"
               style={{
+                backgroundColor: theme.surfaceContainerLowest,
+                borderColor: theme.borderLight + '40',
+                borderWidth: 1,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 1 },
                 shadowOpacity: 0.04,
@@ -180,13 +184,14 @@ export default function CorrectionsReviewScreen() {
                 elevation: 2,
                 opacity: isProcessing ? 0.6 : 1,
               }}
+              className="rounded-xl mx-4 mb-3 p-4"
             >
               {/* Employee Name + Date */}
               <View className="flex-row items-center justify-between mb-2">
-                <Text className="font-geist-semibold text-on-surface text-base">
+                <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-base">
                   {correction.employee_name}
                 </Text>
-                <Text className="font-inter text-xs text-on-surface-variant">
+                <Text style={{ color: theme.textSecondary }} className="font-inter text-xs">
                   {t('admin.corrections.submitted', {
                     date: formatSubmittedDate(correction.created_at),
                   })}
@@ -196,8 +201,8 @@ export default function CorrectionsReviewScreen() {
               {/* Original vs Requested */}
               {isMissedShift ? (
                 <View className="flex-row items-center mb-2">
-                  <MaterialCommunityIcons name="alert-circle-outline" size={16} color={colors.warning} />
-                  <Text style={{ color: colors.warning }} className="font-geist-medium text-sm ml-1.5">
+                  <MaterialCommunityIcons name="alert-circle-outline" size={16} color={theme.warning} />
+                  <Text style={{ color: theme.warning }} className="font-geist-medium text-sm ml-1.5">
                     {t('admin.corrections.missedShift')}
                   </Text>
                 </View>
@@ -205,11 +210,11 @@ export default function CorrectionsReviewScreen() {
 
               {/* Requested times */}
               <View className="flex-row items-center mb-2">
-                <MaterialCommunityIcons name="clock-edit-outline" size={16} color={colors.accent} />
-                <Text style={{ color: colors.accent }} className="font-geist-medium text-sm ml-1.5 mr-1.5">
+                <MaterialCommunityIcons name="clock-edit-outline" size={16} color={theme.accent} />
+                <Text style={{ color: theme.accent }} className="font-geist-medium text-sm ml-1.5 mr-1.5">
                   {t('admin.corrections.requestedChange')}
                 </Text>
-                <Text className="font-geist-semibold text-on-surface text-sm">
+                <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-sm">
                   {formatDate(correction.requested_clock_in_at)} • {formatTime(correction.requested_clock_in_at)} → {formatTime(correction.requested_clock_out_at)}
                 </Text>
               </View>
@@ -217,8 +222,8 @@ export default function CorrectionsReviewScreen() {
               {/* Reason */}
               {correction.reason ? (
                 <View className="flex-row items-start mb-3">
-                  <MaterialCommunityIcons name="comment-text-outline" size={14} color={colors.textSecondary} />
-                  <Text className="text-on-surface-variant text-xs ml-1.5 flex-1 italic" numberOfLines={2}>
+                  <MaterialCommunityIcons name="comment-text-outline" size={14} color={theme.textSecondary} />
+                  <Text style={{ color: theme.textSecondary }} className="text-xs ml-1.5 flex-1 italic" numberOfLines={2}>
                     {t('admin.corrections.reason')} {correction.reason}
                   </Text>
                 </View>
@@ -232,9 +237,9 @@ export default function CorrectionsReviewScreen() {
                   disabled={isProcessing}
                 >
                   {isProcessing ? (
-                    <ActivityIndicator size="small" color={colors.success} />
+                    <ActivityIndicator size="small" color={theme.success} />
                   ) : (
-                    <Text className="font-geist-semibold text-success text-sm">
+                    <Text style={{ color: theme.success }} className="font-geist-semibold text-sm">
                       {t('common.approve')}
                     </Text>
                   )}
@@ -244,7 +249,7 @@ export default function CorrectionsReviewScreen() {
                   onPress={() => handleReject(correction)}
                   disabled={isProcessing}
                 >
-                  <Text className="font-geist-semibold text-error text-sm">
+                  <Text style={{ color: theme.error }} className="font-geist-semibold text-sm">
                     {t('common.reject')}
                   </Text>
                 </Pressable>

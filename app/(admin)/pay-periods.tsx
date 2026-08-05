@@ -13,6 +13,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/app/_layout';
+import { useTheme } from '@/src/theme/ThemeProvider';
 import { getAllEmployees, type Profile } from '@/src/api/profiles';
 import { getPunchesForAllEmployeesInWeek, type Punch } from '@/src/api/punches';
 import { getBusinessSettings } from '@/src/api/businessSettings';
@@ -25,7 +26,6 @@ import { writeAuditEntry } from '@/src/api/auditLog';
 import { calculateWeekTotals } from '@/src/utils/payCalculations';
 import { PayPeriodsSkeleton } from '@/src/components/ui/Skeleton';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
-import { colors } from '@/src/theme/colors';
 
 /** Get the Monday of the ISO week containing `date`. */
 function getWeekMonday(date: Date): Date {
@@ -69,6 +69,7 @@ interface EmployeeRow {
 
 export default function PayPeriodsScreen() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const router = useRouter();
   const { profile: adminProfile } = useAuth();
 
@@ -266,10 +267,13 @@ export default function PayPeriodsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
+    <View style={{ backgroundColor: theme.background }} className="flex-1">
       {/* Week Selector */}
-      <View className="flex-row items-center justify-between mx-4 mt-4 mb-2 p-3 bg-surface-container-lowest rounded-xl"
+      <View className="flex-row items-center justify-between mx-4 mt-4 mb-2 p-3 rounded-xl"
         style={{
+          backgroundColor: theme.surfaceContainerLowest,
+          borderColor: theme.borderLight + '40',
+          borderWidth: 1,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.04,
@@ -278,23 +282,24 @@ export default function PayPeriodsScreen() {
         }}
       >
         <Pressable
-          className="w-10 h-10 rounded-full bg-surface-container justify-center items-center active:opacity-60"
+          style={{ backgroundColor: theme.surfaceVariant }}
+          className="w-10 h-10 rounded-full justify-center items-center active:opacity-60"
           onPress={() => navigateWeek(-1)}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color={colors.textPrimary} />
+          <MaterialCommunityIcons name="chevron-left" size={24} color={theme.textPrimary} />
         </Pressable>
 
         <View className="items-center">
-          <Text className="font-geist-semibold text-on-surface text-base">
+          <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-base">
             {t('admin.payPeriods.weekRange', {
               start: formatShortDate(weekMonday),
               end: formatShortDate(weekSunday),
             })}
           </Text>
           {isCurrentWeek && (
-            <View className="flex-row items-center bg-accent/15 px-2.5 py-0.5 rounded-full mt-1">
-              <MaterialCommunityIcons name="clock-outline" size={12} color={colors.accent} />
-              <Text className="font-geist-medium text-[11px] text-accent ml-1">
+            <View style={{ backgroundColor: theme.accent + '25' }} className="flex-row items-center px-2.5 py-0.5 rounded-full mt-1">
+              <MaterialCommunityIcons name="clock-outline" size={12} color={theme.accent} />
+              <Text style={{ color: theme.accent }} className="font-geist-medium text-[11px] ml-1">
                 {t('admin.payPeriods.currentWeek')}
               </Text>
             </View>
@@ -302,7 +307,7 @@ export default function PayPeriodsScreen() {
           {isFutureWeek && (
             <View className="flex-row items-center bg-purple-500/15 px-2.5 py-0.5 rounded-full mt-1">
               <MaterialCommunityIcons name="calendar-clock" size={12} color="#8B5CF6" />
-              <Text className="font-geist-medium text-[11px] text-purple-600 ml-1">
+              <Text className="font-geist-medium text-[11px] text-purple-400 ml-1">
                 {t('admin.payPeriods.futureWeek')}
               </Text>
             </View>
@@ -310,27 +315,28 @@ export default function PayPeriodsScreen() {
         </View>
 
         <Pressable
-          className="w-10 h-10 rounded-full bg-surface-container justify-center items-center active:opacity-60"
+          style={{ backgroundColor: theme.surfaceVariant }}
+          className="w-10 h-10 rounded-full justify-center items-center active:opacity-60"
           onPress={() => navigateWeek(1)}
         >
-          <MaterialCommunityIcons name="chevron-right" size={24} color={colors.textPrimary} />
+          <MaterialCommunityIcons name="chevron-right" size={24} color={theme.textPrimary} />
         </Pressable>
       </View>
 
       {/* Status Messages */}
       {successMessage && (
-        <Text className="text-success text-center text-sm mb-2 mx-4">{successMessage}</Text>
+        <Text style={{ color: theme.success }} className="text-center text-sm mb-2 mx-4">{successMessage}</Text>
       )}
       {errorMessage && (
-        <Text className="text-error text-center text-sm mb-2 mx-4">{errorMessage}</Text>
+        <Text style={{ color: theme.error }} className="text-center text-sm mb-2 mx-4">{errorMessage}</Text>
       )}
 
       {/* Employee Pay Table */}
       <ScrollView contentContainerStyle={{ paddingTop: 8, paddingBottom: 32 }}>
         {rows.length === 0 ? (
           <View className="flex-1 justify-center items-center pt-20">
-            <MaterialCommunityIcons name="account-group-outline" size={48} color={colors.textSecondary} />
-            <Text className="text-on-surface-variant text-base mt-4">
+            <MaterialCommunityIcons name="account-group-outline" size={48} color={theme.textSecondary} />
+            <Text style={{ color: theme.textSecondary }} className="text-base mt-4">
               {t('admin.payPeriods.noEmployees')}
             </Text>
           </View>
@@ -339,10 +345,13 @@ export default function PayPeriodsScreen() {
             <Pressable
               key={row.employee.id}
               disabled={isFutureWeek}
-              className={`bg-surface-container-lowest rounded-xl mx-4 mb-3 p-4 ${
+              className={`rounded-xl mx-4 mb-3 p-4 ${
                 isFutureWeek ? '' : 'active:opacity-80'
               }`}
               style={{
+                backgroundColor: theme.surfaceContainerLowest,
+                borderColor: theme.borderLight + '40',
+                borderWidth: 1,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 1 },
                 shadowOpacity: 0.04,
@@ -354,30 +363,32 @@ export default function PayPeriodsScreen() {
             >
               {/* Employee Name + Status Badge */}
               <View className="flex-row items-center justify-between mb-3">
-                <Text className="font-geist-semibold text-on-surface text-[15px] flex-1" numberOfLines={1}>
+                <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-[15px] flex-1" numberOfLines={1}>
                   {row.employee.full_name}
                 </Text>
                 <View
-                  className={`rounded-full px-3 py-1 ml-2 ${
-                    row.isPaid
-                      ? 'bg-success/15'
+                  style={{
+                    backgroundColor: row.isPaid
+                      ? theme.success + '25'
                       : isFutureWeek
-                      ? 'bg-purple-500/15'
+                      ? '#8B5CF625'
                       : isCurrentWeek
-                      ? 'bg-accent/15'
-                      : 'bg-on-surface/10'
-                  }`}
+                      ? theme.accent + '25'
+                      : theme.surfaceVariant,
+                  }}
+                  className="rounded-full px-3 py-1 ml-2"
                 >
                   <Text
-                    className={`font-geist-medium text-xs ${
-                      row.isPaid
-                        ? 'text-success'
+                    style={{
+                      color: row.isPaid
+                        ? theme.success
                         : isFutureWeek
-                        ? 'text-purple-600'
+                        ? '#8B5CF6'
                         : isCurrentWeek
-                        ? 'text-accent'
-                        : 'text-on-surface-variant'
-                    }`}
+                        ? theme.accent
+                        : theme.textSecondary,
+                    }}
+                    className="font-geist-medium text-xs"
                   >
                     {row.isPaid
                       ? t('admin.payPeriods.paid')
@@ -393,14 +404,14 @@ export default function PayPeriodsScreen() {
               {/* Hours + Pay row */}
               <View className="flex-row items-center justify-between mb-3">
                 <View className="flex-row items-center flex-1">
-                  <MaterialCommunityIcons name="clock-outline" size={16} color={colors.textSecondary} />
-                  <Text className="font-inter text-sm text-on-surface ml-1.5">
+                  <MaterialCommunityIcons name="clock-outline" size={16} color={theme.textSecondary} />
+                  <Text style={{ color: theme.textPrimary }} className="font-inter text-sm ml-1.5">
                     {row.totalHours.toFixed(1)}h
                   </Text>
                 </View>
                 <View className="flex-row items-center flex-1 justify-end">
-                  <MaterialCommunityIcons name="cash" size={16} color={colors.textSecondary} />
-                  <Text className="font-inter text-sm text-on-surface ml-1.5">
+                  <MaterialCommunityIcons name="cash" size={16} color={theme.textSecondary} />
+                  <Text style={{ color: theme.textPrimary }} className="font-inter text-sm ml-1.5">
                     ${row.totalPay.toFixed(2)}
                   </Text>
                 </View>
@@ -409,16 +420,16 @@ export default function PayPeriodsScreen() {
               {/* Mark as Paid / Week Status Button */}
               {!row.isPaid && !row.isLocked && (
                 isFutureWeek ? (
-                  <View className="bg-surface-container/60 rounded-lg py-2.5 items-center flex-row justify-center opacity-60">
-                    <MaterialCommunityIcons name="circle-off-outline" size={14} color={colors.textSecondary} />
-                    <Text className="font-geist-medium text-textSecondary text-xs ml-1.5">
+                  <View style={{ backgroundColor: theme.surfaceVariant }} className="rounded-lg py-2.5 items-center flex-row justify-center opacity-60">
+                    <MaterialCommunityIcons name="circle-off-outline" size={14} color={theme.textSecondary} />
+                    <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-xs ml-1.5">
                       {t('admin.payPeriods.cannotPayFuture')}
                     </Text>
                   </View>
                 ) : isCurrentWeek ? (
-                  <View className="bg-surface-container/60 rounded-lg py-2.5 items-center flex-row justify-center opacity-60">
-                    <MaterialCommunityIcons name="clock-alert-outline" size={14} color={colors.textSecondary} />
-                    <Text className="font-geist-medium text-textSecondary text-xs ml-1.5">
+                  <View style={{ backgroundColor: theme.surfaceVariant }} className="rounded-lg py-2.5 items-center flex-row justify-center opacity-60">
+                    <MaterialCommunityIcons name="clock-alert-outline" size={14} color={theme.textSecondary} />
+                    <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-xs ml-1.5">
                       {t('admin.payPeriods.cannotPayCurrent')}
                     </Text>
                   </View>
@@ -430,7 +441,7 @@ export default function PayPeriodsScreen() {
                       handleMarkAsPaidPress(row);
                     }}
                   >
-                    <Text className="font-geist-semibold text-success text-sm">
+                    <Text style={{ color: theme.success }} className="font-geist-semibold text-sm">
                       {t('admin.payPeriods.markAsPaid')}
                     </Text>
                   </Pressable>

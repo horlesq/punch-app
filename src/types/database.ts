@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -87,6 +87,7 @@ export type Database = {
           id: string
           logo_url: string | null
           primary_color: string
+          theme_mode: string
           timezone: string
         }
         Insert: {
@@ -100,6 +101,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           primary_color?: string
+          theme_mode?: string
           timezone?: string
         }
         Update: {
@@ -113,6 +115,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           primary_color?: string
+          theme_mode?: string
           timezone?: string
         }
         Relationships: []

@@ -1,5 +1,7 @@
+import 'react-native-gesture-handler';
 import React, { createContext, useContext, useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Redirect, Slot, useSegments } from 'expo-router';
 import { useFonts } from 'expo-font';
@@ -16,8 +18,8 @@ import {
 } from '@expo-google-fonts/geist';
 
 import { useSession, type SessionState } from '@/src/hooks/useSession';
+import { ThemeProvider, useTheme } from '@/src/theme/ThemeProvider';
 import '@/src/lib/i18n';
-import { RootAppSkeleton } from '@/src/components/ui/Skeleton';
 import '../global.css';
 
 // Prevent splash screen from auto-hiding
@@ -42,12 +44,13 @@ export function useAuth(): SessionState {
 function RootLayoutInner() {
   const sessionState = useSession();
   const segments = useSegments();
+  const { theme } = useTheme();
 
   // Show a loading spinner while the initial session check is in progress.
   if (sessionState.isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
-        <ActivityIndicator size="large" className="text-primary" />
+      <View style={{ backgroundColor: theme.background }} className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
@@ -76,6 +79,7 @@ function RootLayoutInner() {
 /**
  * Root layout — wraps the entire app and imports global.css,
  * handles auth-based redirects and font loading.
+ * ThemeProvider wraps everything so useTheme() is available everywhere.
  */
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -97,5 +101,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutInner />;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <RootLayoutInner />
+      </ThemeProvider>
+    </GestureHandlerRootView>
+  );
 }

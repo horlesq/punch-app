@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/app/_layout';
+import { useTheme } from '@/src/theme/ThemeProvider';
 import { getProfile, type Profile } from '@/src/api/profiles';
 import { getPunchesForEmployeeInWeek, type Punch } from '@/src/api/punches';
 import { getBusinessSettings } from '@/src/api/businessSettings';
@@ -28,7 +29,6 @@ import {
 } from '@/src/utils/payCalculations';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
 import { PayPeriodDetailSkeleton } from '@/src/components/ui/Skeleton';
-import { colors } from '@/src/theme/colors';
 
 /** Format a date as YYYY-MM-DD. */
 function toDateString(date: Date): string {
@@ -91,6 +91,7 @@ interface ShiftRow {
 
 export default function PayPeriodDetailScreen() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const { employeeId, weekStart } = useLocalSearchParams<{
     employeeId: string;
     weekStart: string;
@@ -272,7 +273,7 @@ export default function PayPeriodDetailScreen() {
   if (isFutureWeek) {
     return (
       <View className="flex-1 justify-center items-center bg-background px-6">
-        <MaterialCommunityIcons name="calendar-clock" size={48} color={colors.textSecondary} />
+        <MaterialCommunityIcons name="calendar-clock" size={48} color={theme.textSecondary} />
         <Text className="font-geist-semibold text-on-surface text-lg mt-4 text-center">
           {t('admin.payPeriodDetail.futureWeekTitle')}
         </Text>
@@ -310,8 +311,8 @@ export default function PayPeriodDetailScreen() {
         </View>
         {isCurrentWeek && (
           <View className="flex-row items-center bg-accent/15 px-3 py-1 rounded-full">
-            <MaterialCommunityIcons name="clock-outline" size={14} color={colors.accent} />
-            <Text className="font-geist-medium text-xs text-accent ml-1">
+            <MaterialCommunityIcons name="clock-outline" size={14} color={theme.accent} />
+            <Text style={{ color: theme.accent }} className="font-geist-medium text-xs ml-1">
               {t('admin.payPeriods.currentWeek')}
             </Text>
           </View>
@@ -329,8 +330,8 @@ export default function PayPeriodDetailScreen() {
       {/* Locked Banner */}
       {isLocked && payPeriod?.paid_at && (
         <View className="mx-4 mb-4 p-4 bg-success/15 rounded-2xl flex-row items-center">
-          <MaterialCommunityIcons name="lock" size={20} color={colors.success} />
-          <Text className="font-geist-semibold text-success text-sm ml-2.5 flex-1">
+          <MaterialCommunityIcons name="lock" size={20} color={theme.success} />
+          <Text style={{ color: theme.success }} className="font-geist-semibold text-sm ml-2.5 flex-1">
             {t('admin.payPeriodDetail.lockedBanner', {
               date: formatFullDate(payPeriod.paid_at),
             })}
@@ -340,7 +341,7 @@ export default function PayPeriodDetailScreen() {
 
       {/* Messages */}
       {successMessage && (
-        <Text className="text-success text-center text-sm mb-4 mx-4">{successMessage}</Text>
+        <Text style={{ color: theme.success }} className="text-center text-sm mb-4 mx-4">{successMessage}</Text>
       )}
       {errorMessage && (
         <Text className="text-error text-center text-sm mb-4 mx-4">{errorMessage}</Text>
@@ -349,7 +350,7 @@ export default function PayPeriodDetailScreen() {
       {/* Shifts Table */}
       {shifts.length === 0 ? (
         <View className="justify-center items-center pt-12">
-          <MaterialCommunityIcons name="calendar-blank-outline" size={48} color={colors.textSecondary} />
+          <MaterialCommunityIcons name="calendar-blank-outline" size={48} color={theme.textSecondary} />
           <Text className="text-on-surface-variant text-base mt-4">
             {t('admin.payPeriodDetail.noShifts')}
           </Text>
@@ -428,8 +429,9 @@ export default function PayPeriodDetailScreen() {
 
       {/* Week Totals Summary Card */}
       <View
-        className="mx-4 mt-4 p-4 rounded-2xl bg-on-surface flex-row justify-between items-center"
+        className="mx-4 mt-4 p-4 rounded-2xl flex-row justify-between items-center"
         style={{
+          backgroundColor: theme.primary,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.12,
@@ -438,18 +440,18 @@ export default function PayPeriodDetailScreen() {
         }}
       >
         <View>
-          <Text className="font-geist-medium text-xs text-surface-container-high uppercase tracking-wider">
+          <Text style={{ color: theme.textInverse }} className="font-geist-medium text-xs opacity-80 uppercase tracking-wider">
             {t('admin.payPeriodDetail.totalHours')}
           </Text>
-          <Text className="font-geist-bold text-surface-container-lowest text-xl sm:text-2xl mt-0.5">
+          <Text style={{ color: theme.textInverse }} className="font-geist-bold text-xl sm:text-2xl mt-0.5">
             {totalHours.toFixed(1)}h
           </Text>
         </View>
         <View className="items-end">
-          <Text className="font-geist-medium text-xs text-surface-container-high uppercase tracking-wider">
+          <Text style={{ color: theme.textInverse }} className="font-geist-medium text-xs opacity-80 uppercase tracking-wider">
             {t('admin.payPeriodDetail.totalPay')}
           </Text>
-          <Text className="font-geist-bold text-surface-container-lowest text-xl sm:text-2xl mt-0.5">
+          <Text style={{ color: theme.textInverse }} className="font-geist-bold text-xl sm:text-2xl mt-0.5">
             ${totalPay.toFixed(2)}
           </Text>
         </View>
@@ -461,8 +463,8 @@ export default function PayPeriodDetailScreen() {
           className="mx-4 mt-4 bg-error/10 border border-error/20 rounded-2xl p-4 items-center flex-row justify-center active:opacity-80"
           onPress={() => setShowUnlockModal(true)}
         >
-          <MaterialCommunityIcons name="lock-open-outline" size={18} color={colors.error} />
-          <Text className="font-geist-semibold text-error text-base ml-2">
+          <MaterialCommunityIcons name="lock-open-outline" size={18} color={theme.error} />
+          <Text style={{ color: theme.error }} className="font-geist-semibold text-base ml-2">
             {t('admin.payPeriodDetail.unlock')}
           </Text>
         </Pressable>

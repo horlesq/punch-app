@@ -9,8 +9,7 @@ import { CustomTabBar } from '@/src/components/ui/CustomTabBar';
 import { CustomHeader } from '@/src/components/ui/CustomHeader';
 
 import { useAuth } from '@/app/_layout';
-import { DashboardSkeleton } from '@/src/components/ui/Skeleton';
-import { colors } from '@/src/theme/colors';
+import { useTheme } from '@/src/theme/ThemeProvider';
 
 /**
  * Admin layout — layout-level role guard.
@@ -19,12 +18,13 @@ import { colors } from '@/src/theme/colors';
 export default function AdminLayout() {
   const { t } = useTranslation();
   const { session, profile, isLoading, isProfileLoading } = useAuth();
+  const { theme } = useTheme();
 
   // Show loading spinner after login while checking session & profile role
   if (isLoading || isProfileLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-surface">
-        <ActivityIndicator size="large" color={colors.primary} />
+      <View style={{ backgroundColor: theme.background }} className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }

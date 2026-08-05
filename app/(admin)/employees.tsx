@@ -12,13 +12,14 @@ import { useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
+import { useTheme } from '@/src/theme/ThemeProvider';
 import { getAllEmployees, type Profile } from '@/src/api/profiles';
 import { UserAvatar } from '@/src/components/ui/UserAvatar';
 import { EmployeesSkeleton } from '@/src/components/ui/Skeleton';
-import { colors } from '@/src/theme/colors';
 
 export default function EmployeesScreen() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const router = useRouter();
 
   const [employees, setEmployees] = useState<Profile[]>([]);
@@ -55,7 +56,7 @@ export default function EmployeesScreen() {
       <View className="flex-1 justify-center items-center bg-background px-6">
         <Text className="text-error text-center mb-4">{errorMessage}</Text>
         <Pressable onPress={loadData} className="active:opacity-70">
-          <Text style={{ color: colors.accent }} className="font-geist-semibold">
+          <Text style={{ color: theme.accent }} className="font-geist-semibold">
             {t('common.retry')}
           </Text>
         </Pressable>
@@ -64,22 +65,25 @@ export default function EmployeesScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
+    <View style={{ backgroundColor: theme.background }} className="flex-1">
       <ScrollView contentContainerStyle={{ paddingTop: 16, paddingBottom: 32 }}>
         {/* Add Employee Button */}
         <Pressable
-          className="bg-surface-container-lowest flex-row items-center justify-center p-4 mx-4 mb-6 rounded-xl active:opacity-60"
           style={{
+            backgroundColor: theme.surfaceContainerLowest,
+            borderColor: theme.borderLight + '40',
+            borderWidth: 1,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.04,
             shadowRadius: 4,
             elevation: 2,
           }}
+          className="flex-row items-center justify-center p-4 mx-4 mb-6 rounded-xl active:opacity-60"
           onPress={() => router.push('/(admin)/add-employee')}
         >
-          <MaterialCommunityIcons name="account-plus-outline" size={20} color={colors.primary} />
-          <Text style={{ color: colors.primary }} className="font-geist-semibold text-sm ml-2">
+          <MaterialCommunityIcons name="account-plus-outline" size={20} color={theme.primary} />
+          <Text style={{ color: theme.primary }} className="font-geist-semibold text-sm ml-2">
             {t('admin.employees.addEmployee')}
           </Text>
         </Pressable>
@@ -87,8 +91,8 @@ export default function EmployeesScreen() {
         {/* Employee List */}
         {employees.length === 0 ? (
           <View className="flex-1 justify-center items-center pt-20">
-            <MaterialCommunityIcons name="account-group-outline" size={48} color={colors.textSecondary} />
-            <Text className="text-on-surface-variant text-base mt-4">
+            <MaterialCommunityIcons name="account-group-outline" size={48} color={theme.textSecondary} />
+            <Text style={{ color: theme.textSecondary }} className="text-base mt-4">
               {t('admin.employees.empty')}
             </Text>
           </View>
@@ -96,8 +100,10 @@ export default function EmployeesScreen() {
           employees.map((employee) => (
             <Pressable
               key={employee.id}
-              className="bg-surface-container-lowest rounded-xl mx-4 mb-3 p-4 active:opacity-80"
               style={{
+                backgroundColor: theme.surfaceContainerLowest,
+                borderColor: theme.borderLight + '40',
+                borderWidth: 1,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 1 },
                 shadowOpacity: 0.04,
@@ -105,6 +111,7 @@ export default function EmployeesScreen() {
                 elevation: 2,
                 opacity: employee.is_active ? 1 : 0.5,
               }}
+              className="rounded-xl mx-4 mb-3 p-4 active:opacity-80"
               onPress={() => router.push({
                 pathname: '/(admin)/employee-detail',
                 params: { employeeId: employee.id },
@@ -114,10 +121,10 @@ export default function EmployeesScreen() {
                 <View className="flex-row items-center flex-1">
                   <UserAvatar name={employee.full_name} size={44} />
                   <View className="ml-3 flex-1">
-                    <Text className="font-geist-semibold text-on-surface text-[15px]">
+                    <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-[15px]">
                       {employee.full_name}
                     </Text>
-                    <Text className="font-inter text-xs text-on-surface-variant mt-0.5">
+                    <Text style={{ color: theme.textSecondary }} className="font-inter text-xs mt-0.5">
                       {t('admin.employees.perHour', {
                         rate: `$${(employee.hourly_rate ?? 0).toFixed(2)}`,
                       })}
@@ -127,14 +134,14 @@ export default function EmployeesScreen() {
 
                 {/* Status badge */}
                 <View
-                  className={`rounded-full px-3 py-1 ${
-                    employee.is_active ? 'bg-success/15' : 'bg-on-surface/10'
-                  }`}
+                  style={{
+                    backgroundColor: employee.is_active ? theme.success + '25' : theme.surfaceVariant,
+                  }}
+                  className="rounded-full px-3 py-1"
                 >
                   <Text
-                    className={`font-geist-medium text-xs ${
-                      employee.is_active ? 'text-success' : 'text-on-surface-variant'
-                    }`}
+                    style={{ color: employee.is_active ? theme.success : theme.textSecondary }}
+                    className="font-geist-medium text-xs"
                   >
                     {employee.is_active
                       ? t('admin.employees.active')

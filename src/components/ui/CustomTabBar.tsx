@@ -2,18 +2,19 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors } from '@/src/theme/colors';
+import { useTheme } from '@/src/theme/ThemeProvider';
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
 
   return (
     <View
       style={{
         flexDirection: 'row',
-        backgroundColor: colors.surface,
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
+        backgroundColor: theme.surfaceContainerLowest,
+        borderTopWidth: 1,
+        borderColor: theme.borderLight,
         paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
         paddingTop: 10,
         shadowColor: '#000',
@@ -63,7 +64,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           });
         };
 
-        const color = isFocused ? colors.accent : colors.textSecondary;
+        const color = isFocused ? theme.accent : theme.textSecondary;
         const label = options.title !== undefined ? options.title : route.name;
 
         return (
@@ -91,7 +92,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               className="h-[3px] mt-1.5 rounded-full" 
               style={{ 
                 width: 20, 
-                backgroundColor: isFocused ? colors.accent : 'transparent' 
+                backgroundColor: isFocused ? theme.accent : 'transparent' 
               }} 
             />
           </Pressable>

@@ -16,10 +16,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/app/_layout';
+import { useTheme } from '@/src/theme/ThemeProvider';
 import { createCorrection, applyCorrection } from '@/src/api/corrections';
 import { isWeekLockedForEmployee } from '@/src/api/payPeriods';
 import { getBusinessSettings } from '@/src/api/businessSettings';
-import { colors } from '@/src/theme/colors';
 
 function getWeekStartForDateString(dateStr: string): string {
   const parts = dateStr.split('-').map(Number);
@@ -37,6 +37,7 @@ function getWeekStartForDateString(dateStr: string): string {
 export default function CorrectionScreen() {
   const { t } = useTranslation();
   const { profile } = useAuth();
+  const { theme } = useTheme();
   const router = useRouter();
   const params = useLocalSearchParams<{ punchId?: string; date?: string; clockIn?: string; clockOut?: string }>();
 
@@ -233,9 +234,9 @@ export default function CorrectionScreen() {
   // Success state
   if (successMessage) {
     return (
-      <View className="flex-1 justify-center items-center bg-background px-6">
-        <MaterialCommunityIcons name="check-circle-outline" size={64} color={colors.success} />
-        <Text className="text-on-surface font-geist-semibold text-lg mt-4 text-center">
+      <View style={{ backgroundColor: theme.background }} className="flex-1 justify-center items-center px-6">
+        <MaterialCommunityIcons name="check-circle-outline" size={64} color={theme.success} />
+        <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-lg mt-4 text-center">
           {successMessage}
         </Text>
       </View>
@@ -259,7 +260,8 @@ export default function CorrectionScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-background"
+      style={{ backgroundColor: theme.background }}
+      className="flex-1"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -267,22 +269,26 @@ export default function CorrectionScreen() {
         contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
       >
-        <Text className="text-on-surface font-geist-semibold text-2xl mb-6">
+        <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-2xl mb-6">
           {punchId ? t('correction.titleEdit') : t('correction.titleMissed')}
         </Text>
 
         {/* Date display */}
         <View className="mb-6">
-          <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+          <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
             {t('correction.selectDate')}
           </Text>
           {Platform.OS === 'web' ? (
-            <View className="bg-surface-container-lowest rounded-xl p-4 flex-row items-center">
-              <MaterialCommunityIcons name="calendar" size={20} color={colors.textSecondary} />
+            <View
+              style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight }}
+              className="rounded-xl p-4 flex-row items-center border"
+            >
+              <MaterialCommunityIcons name="calendar" size={20} color={theme.textSecondary} />
               <TextInput
-                className="flex-1 text-on-surface font-geist-medium text-base ml-3"
+                style={{ color: theme.textPrimary }}
+                className="flex-1 font-geist-medium text-base ml-3"
                 placeholder="YYYY-MM-DD"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={theme.textSecondary}
                 value={selectedDate}
                 onChangeText={setSelectedDate}
                 {...({ type: 'date' } as any)}
@@ -291,11 +297,12 @@ export default function CorrectionScreen() {
           ) : (
             <>
               <Pressable
-                className="bg-surface-container-lowest rounded-xl p-4 flex-row items-center"
+                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight }}
+                className="rounded-xl p-4 flex-row items-center border"
                 onPress={showDatePicker}
               >
-                <MaterialCommunityIcons name="calendar" size={20} color={colors.textSecondary} />
-                <Text className="flex-1 text-on-surface font-geist-medium text-base ml-3">
+                <MaterialCommunityIcons name="calendar" size={20} color={theme.textSecondary} />
+                <Text style={{ color: theme.textPrimary }} className="flex-1 font-geist-medium text-base ml-3">
                   {selectedDate || 'YYYY-MM-DD'}
                 </Text>
               </Pressable>
@@ -312,14 +319,15 @@ export default function CorrectionScreen() {
 
         {/* Clock-in time */}
         <View className="mb-6">
-          <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+          <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
             {t('correction.clockInTime')}
           </Text>
           {Platform.OS === 'web' ? (
             <TextInput
-              className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
+              style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight }}
+              className="rounded-xl p-4 font-inter text-base border"
               placeholder="08:30"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={theme.textSecondary}
               value={clockInTime}
               onChangeText={setClockInTime}
               {...({ type: 'time' } as any)}
@@ -327,10 +335,11 @@ export default function CorrectionScreen() {
           ) : (
             <>
               <Pressable
-                className="bg-surface-container-lowest rounded-xl p-4 flex-row items-center h-[52px]"
+                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight }}
+                className="rounded-xl p-4 flex-row items-center h-[52px] border"
                 onPress={showClockInPicker}
               >
-                <Text className={`font-inter text-base ${clockInTime ? 'text-on-surface' : 'text-on-surface-variant'}`}>
+                <Text style={{ color: clockInTime ? theme.textPrimary : theme.textSecondary }} className="font-inter text-base">
                   {clockInTime || '08:30'}
                 </Text>
               </Pressable>
@@ -347,14 +356,15 @@ export default function CorrectionScreen() {
 
         {/* Clock-out time */}
         <View className="mb-6">
-          <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+          <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
             {t('correction.clockOutTime')}
           </Text>
           {Platform.OS === 'web' ? (
             <TextInput
-              className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
+              style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight }}
+              className="rounded-xl p-4 font-inter text-base border"
               placeholder="17:00"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={theme.textSecondary}
               value={clockOutTime}
               onChangeText={setClockOutTime}
               {...({ type: 'time' } as any)}
@@ -362,10 +372,11 @@ export default function CorrectionScreen() {
           ) : (
             <>
               <Pressable
-                className="bg-surface-container-lowest rounded-xl p-4 flex-row items-center h-[52px]"
+                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight }}
+                className="rounded-xl p-4 flex-row items-center h-[52px] border"
                 onPress={showClockOutPicker}
               >
-                <Text className={`font-inter text-base ${clockOutTime ? 'text-on-surface' : 'text-on-surface-variant'}`}>
+                <Text style={{ color: clockOutTime ? theme.textPrimary : theme.textSecondary }} className="font-inter text-base">
                   {clockOutTime || '17:00'}
                 </Text>
               </Pressable>
@@ -382,44 +393,45 @@ export default function CorrectionScreen() {
 
         {/* Reason */}
         <View className="mb-8">
-          <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+          <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
             {t('correction.reason')}
           </Text>
           <TextInput
-            className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
+            style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight, minHeight: 100 }}
+            className="rounded-xl p-4 font-inter text-base border"
             placeholder={t('correction.reasonPlaceholder')}
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={theme.textSecondary}
             value={reason}
             onChangeText={setReason}
             multiline
             numberOfLines={3}
             textAlignVertical="top"
-            style={{ minHeight: 100 }}
           />
         </View>
 
         {/* Error message */}
         {errorMessage && (
-          <Text className="text-error text-center text-sm mb-4">{errorMessage}</Text>
+          <Text style={{ color: theme.error }} className="text-center text-sm mb-4">{errorMessage}</Text>
         )}
 
         {/* Submit button */}
         <Pressable
-          className={`rounded-xl p-4 items-center ${
-            isWeekLocked ? 'bg-surface-container-high' : 'bg-primary active:opacity-80'
-          }`}
-          style={{ opacity: isSubmitting || isWeekLocked ? 0.5 : 1 }}
+          className="rounded-xl p-4 items-center"
+          style={{
+            backgroundColor: isWeekLocked ? theme.surfaceVariant : theme.primary,
+            opacity: isSubmitting || isWeekLocked ? 0.5 : 1,
+          }}
           onPress={handleSubmit}
           disabled={isSubmitting || isWeekLocked}
         >
           {isSubmitting ? (
-            <ActivityIndicator size="small" color={colors.textInverse} />
+            <ActivityIndicator size="small" color="#ffffff" />
           ) : (
             <View className="flex-row items-center justify-center">
               {isWeekLocked && (
-                <MaterialCommunityIcons name="lock-outline" size={18} color={colors.textSecondary} style={{ marginRight: 6 }} />
+                <MaterialCommunityIcons name="lock-outline" size={18} color={theme.textSecondary} style={{ marginRight: 6 }} />
               )}
-              <Text className={isWeekLocked ? 'text-on-surface-variant font-geist-semibold text-base' : 'text-on-primary font-geist-semibold text-base'}>
+              <Text style={{ color: isWeekLocked ? theme.textSecondary : '#ffffff' }} className="font-geist-semibold text-base">
                 {punchId ? t('correction.submit') : t('correction.submitMissedShift')}
               </Text>
             </View>
@@ -431,7 +443,7 @@ export default function CorrectionScreen() {
           className="mt-4 items-center active:opacity-60"
           onPress={() => router.push('/(employee)/history')}
         >
-          <Text style={{ color: colors.accent }} className="font-geist-medium text-sm">
+          <Text style={{ color: theme.accent }} className="font-geist-medium text-sm">
             {t('common.cancel')}
           </Text>
         </Pressable>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -11,16 +12,18 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { signInWithEmail } from '@/src/api/auth';
-import { colors } from '@/src/theme/colors';
+import { useTheme } from '@/src/theme/ThemeProvider';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
+  const [logoError, setLogoError] = useState(false);
   
   // Focus states for input styling
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -47,35 +50,69 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-surface-bright"
+      style={{ backgroundColor: theme.background }}
+      className="flex-1"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View className="flex-1 justify-center p-6">
-        <View className="p-8 rounded-[24px] bg-surface">
+        <View
+          style={{
+            backgroundColor: theme.surfaceContainerLowest,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            elevation: 4,
+          }}
+          className="p-8 rounded-[24px]"
+        >
           
           <View className="items-center mb-10">
-            <View className="w-16 h-16 rounded-full items-center justify-center mb-6 bg-surface-container">
-              <MaterialCommunityIcons name="briefcase" size={32} color={colors.primary} />
-            </View>
-            <Text className="text-headline-lg text-primary text-center mb-2">
-              Welcome back
+            {/* Show business logo if set, otherwise show placeholder icon */}
+            {theme.logoUrl && !logoError ? (
+              <Image
+                source={{ uri: theme.logoUrl }}
+                style={{ width: 64, height: 64, borderRadius: 32 }}
+                className="mb-6"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <View
+                style={{ backgroundColor: theme.primary }}
+                className="w-16 h-16 rounded-full items-center justify-center mb-6"
+              >
+                <MaterialCommunityIcons name="briefcase" size={32} color="#ffffff" />
+              </View>
+            )}
+            <Text style={{ color: theme.textPrimary }} className="text-headline-lg text-center mb-2">
+              {t('auth.login.title')}
             </Text>
-            <Text className="text-body-md text-textSecondary text-center">
-              Sign in to continue to Punch App.
+            <Text style={{ color: theme.textSecondary }} className="text-body-md text-center">
+              {t('auth.login.subtitle')}
             </Text>
           </View>
 
           <View className="mb-2">
             {/* Email */}
-            <Text className="text-label-md text-primary mb-2">
-              Email Address
+            <Text style={{ color: theme.textPrimary }} className="text-label-md mb-2">
+              {t('auth.login.emailLabel')}
             </Text>
-            <View className={`flex-row items-center border px-4 h-14 rounded-lg ${isEmailFocused ? 'bg-surface border-digital' : 'bg-surface-container-low border-outline-variant'}`}>
-              <MaterialCommunityIcons name="email-outline" size={20} color={isEmailFocused ? colors.accent : colors.textSecondary} style={{ marginRight: 12 }} />
+            <View
+              style={{
+                backgroundColor: theme.surfaceVariant,
+                borderColor: isEmailFocused ? theme.accent : theme.borderLight,
+              }}
+              className="flex-row items-center border px-4 h-14 rounded-lg"
+            >
+              <MaterialCommunityIcons name="email-outline" size={20} color={isEmailFocused ? theme.accent : theme.textSecondary} style={{ marginRight: 12 }} />
               <TextInput
-                className="flex-1 h-full text-body-md text-primary outline-none focus:outline-none"
-                placeholder="name@company.com"
-                placeholderTextColor={colors.textSecondary}
+                style={[
+                  { color: theme.textPrimary },
+                  Platform.OS === 'web' ? { outline: 'none' } : undefined,
+                ]}
+                className="flex-1 h-full text-body-md"
+                placeholder={t('auth.login.emailPlaceholder')}
+                placeholderTextColor={theme.textSecondary}
                 autoCapitalize="none"
                 autoComplete="email"
                 keyboardType="email-address"
@@ -85,20 +122,29 @@ export default function LoginScreen() {
                 editable={!isSubmitting}
                 onFocus={() => setIsEmailFocused(true)}
                 onBlur={() => setIsEmailFocused(false)}
-                style={Platform.OS === 'web' ? { outline: 'none' } : undefined}
               />
             </View>
 
             {/* Password */}
-            <Text className="text-label-md text-primary mt-5 mb-2">
-              Password
+            <Text style={{ color: theme.textPrimary }} className="text-label-md mt-5 mb-2">
+              {t('auth.login.passwordLabel')}
             </Text>
-            <View className={`flex-row items-center border px-4 h-14 rounded-lg ${isPasswordFocused ? 'bg-surface border-digital' : 'bg-surface-container-low border-outline-variant'}`}>
-              <MaterialCommunityIcons name="lock-outline" size={20} color={isPasswordFocused ? colors.accent : colors.textSecondary} style={{ marginRight: 12 }} />
+            <View
+              style={{
+                backgroundColor: theme.surfaceVariant,
+                borderColor: isPasswordFocused ? theme.accent : theme.borderLight,
+              }}
+              className="flex-row items-center border px-4 h-14 rounded-lg"
+            >
+              <MaterialCommunityIcons name="lock-outline" size={20} color={isPasswordFocused ? theme.accent : theme.textSecondary} style={{ marginRight: 12 }} />
               <TextInput
-                className="flex-1 h-full text-body-md text-primary outline-none focus:outline-none"
+                style={[
+                  { color: theme.textPrimary },
+                  Platform.OS === 'web' ? { outline: 'none' } : undefined,
+                ]}
+                className="flex-1 h-full text-body-md"
                 placeholder="••••••••"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={theme.textSecondary}
                 secureTextEntry
                 autoComplete="password"
                 textContentType="password"
@@ -107,56 +153,62 @@ export default function LoginScreen() {
                 editable={!isSubmitting}
                 onFocus={() => setIsPasswordFocused(true)}
                 onBlur={() => setIsPasswordFocused(false)}
-                style={Platform.OS === 'web' ? { outline: 'none' } : undefined}
               />
             </View>
 
             {/* Options Row */}
             <View className="flex-row justify-between items-center mt-6 mb-8">
               <Pressable className="flex-row items-center" onPress={() => setRememberMe(!rememberMe)}>
-                <View className={`w-5 h-5 border items-center justify-center mr-3 rounded-sm ${rememberMe ? 'bg-primary border-primary' : 'bg-transparent border-outline-variant'}`}>
-                  {rememberMe && <MaterialCommunityIcons name="check" size={14} color="#FFFFFF" />}
+                <View
+                  style={rememberMe ? { backgroundColor: theme.primary, borderColor: theme.primary } : { borderColor: theme.borderLight }}
+                  className={`w-5 h-5 border items-center justify-center mr-3 rounded-sm ${rememberMe ? '' : 'bg-transparent'}`}
+                >
+                  {rememberMe && <MaterialCommunityIcons name="check" size={14} color="#ffffff" />}
                 </View>
-                <Text className="text-label-md text-textSecondary">
-                  Remember me
+                <Text style={{ color: theme.textSecondary }} className="text-label-md">
+                  {t('auth.login.rememberMe')}
                 </Text>
               </Pressable>
               
               <Pressable>
-                <Text className="text-label-md text-primary">
-                  Forgot password?
+                <Text style={{ color: theme.accent }} className="text-label-md">
+                  {t('auth.login.forgotPassword')}
                 </Text>
               </Pressable>
             </View>
 
             {/* Error message */}
             {errorMessage ? (
-              <Text className="mb-4 text-center text-label-md text-error">
+              <Text style={{ color: theme.error }} className="mb-4 text-center text-label-md">
                 {errorMessage}
               </Text>
             ) : null}
 
             {/* Submit button */}
             <Pressable
-              className={`items-center justify-center h-14 rounded-lg ${(!isFormValid || isSubmitting) ? 'bg-outline-variant' : 'bg-primary'}`}
+              className="items-center justify-center h-14 rounded-lg"
+              style={
+                isFormValid && !isSubmitting
+                  ? { backgroundColor: theme.primary }
+                  : { backgroundColor: theme.surfaceVariant, opacity: 0.7 }
+              }
               onPress={handleLogin}
               disabled={!isFormValid || isSubmitting}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.9 : 1,
-                ...(isFormValid && !isSubmitting ? { shadowColor: 'rgba(15, 23, 42, 0.12)', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 1, shadowRadius: 24, elevation: 4 } : {}),
-              })}
             >
-              <Text className={`text-label-md ${(!isFormValid || isSubmitting) ? 'text-textSecondary' : 'text-on-primary'}`}>
-                {isSubmitting ? 'Signing In...' : 'Sign In'}
+              <Text
+                style={{ color: (!isFormValid || isSubmitting) ? theme.textSecondary : '#ffffff' }}
+                className="text-label-md font-geist-semibold"
+              >
+                {isSubmitting ? t('auth.login.submitting') : t('auth.login.submit')}
               </Text>
             </Pressable>
           </View>
 
           {/* Footer */}
           <View className="items-center mt-10">
-            <Text className="text-body-md text-textSecondary">
-              Don't have an account?{' '}
-              <Text className="text-primary font-geist-bold">Contact Admin</Text>
+            <Text style={{ color: theme.textSecondary }} className="text-body-md">
+              {t('auth.login.noAccount')}{' '}
+              <Text style={{ color: theme.accent }} className="font-geist-bold">{t('auth.login.contactAdmin')}</Text>
             </Text>
           </View>
 

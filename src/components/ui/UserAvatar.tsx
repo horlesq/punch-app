@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { colors } from '@/src/theme/colors';
+import { useTheme } from '@/src/theme/ThemeProvider';
 
 type UserAvatarProps = {
   avatarUrl?: string | null;
@@ -14,6 +14,8 @@ type UserAvatarProps = {
  * initials/icon if no profile picture is set.
  */
 export function UserAvatar({ avatarUrl, name, size = 40 }: UserAvatarProps) {
+  const { theme } = useTheme();
+
   if (avatarUrl) {
     return (
       <Image
@@ -41,7 +43,7 @@ export function UserAvatar({ avatarUrl, name, size = 40 }: UserAvatarProps) {
         style={{ width: size, height: size, borderRadius: size / 2 }}
         className="bg-surface-container-high items-center justify-center border border-outline-variant/40"
       >
-        <Text style={{ fontSize: size * 0.38 }} className="font-geist-semibold text-primary">
+        <Text style={{ fontSize: size * 0.38, color: theme.primary }} className="font-geist-semibold">
           {initials}
         </Text>
       </View>
@@ -53,7 +55,7 @@ export function UserAvatar({ avatarUrl, name, size = 40 }: UserAvatarProps) {
       style={{ width: size, height: size, borderRadius: size / 2 }}
       className="bg-surface-container-high items-center justify-center border border-outline-variant/40"
     >
-      <MaterialCommunityIcons name="account" size={size * 0.6} color={colors.textSecondary} />
+      <MaterialCommunityIcons name="account" size={size * 0.6} color={theme.textSecondary} />
     </View>
   );
 }

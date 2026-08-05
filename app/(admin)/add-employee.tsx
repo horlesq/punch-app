@@ -14,13 +14,14 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/app/_layout';
+import { useTheme } from '@/src/theme/ThemeProvider';
 import { createEmployee } from '@/src/api/profiles';
 import { writeAuditEntry } from '@/src/api/auditLog';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
-import { colors } from '@/src/theme/colors';
 
 export default function AddEmployeeScreen() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const router = useRouter();
   const { profile: adminProfile } = useAuth();
 
@@ -118,7 +119,7 @@ export default function AddEmployeeScreen() {
           <TextInput
             className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
             placeholder={t('admin.addEmployee.fullNamePlaceholder')}
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={theme.textSecondary}
             value={fullName}
             onChangeText={setFullName}
             autoCapitalize="words"
@@ -133,7 +134,7 @@ export default function AddEmployeeScreen() {
           <TextInput
             className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
             placeholder={t('admin.addEmployee.emailPlaceholder')}
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={theme.textSecondary}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -150,7 +151,7 @@ export default function AddEmployeeScreen() {
           <TextInput
             className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
             placeholder={t('admin.addEmployee.hourlyRatePlaceholder')}
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={theme.textSecondary}
             value={hourlyRate}
             onChangeText={setHourlyRate}
             keyboardType="decimal-pad"
@@ -164,15 +165,15 @@ export default function AddEmployeeScreen() {
 
         {/* Submit button */}
         <Pressable
-          className="bg-primary rounded-xl p-4 items-center active:opacity-80"
-          style={{ opacity: isSubmitting ? 0.6 : 1 }}
+          className="rounded-xl p-4 items-center active:opacity-80"
+          style={{ backgroundColor: theme.primary, opacity: isSubmitting ? 0.6 : 1 }}
           onPress={handleSubmit}
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <ActivityIndicator size="small" color={colors.textInverse} />
+            <ActivityIndicator size="small" color={theme.textInverse} />
           ) : (
-            <Text className="text-on-primary font-geist-semibold text-base">
+            <Text style={{ color: theme.textInverse }} className="font-geist-semibold text-base">
               {t('admin.addEmployee.submit')}
             </Text>
           )}
@@ -183,7 +184,7 @@ export default function AddEmployeeScreen() {
           className="mt-4 items-center active:opacity-60"
           onPress={() => router.back()}
         >
-          <Text style={{ color: colors.accent }} className="font-geist-medium text-sm">
+          <Text style={{ color: theme.accent }} className="font-geist-medium text-sm">
             {t('common.cancel')}
           </Text>
         </Pressable>

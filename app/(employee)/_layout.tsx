@@ -9,8 +9,7 @@ import { CustomTabBar } from '@/src/components/ui/CustomTabBar';
 import { CustomHeader } from '@/src/components/ui/CustomHeader';
 
 import { useAuth } from '@/app/_layout';
-import { PunchSkeleton } from '@/src/components/ui/Skeleton';
-import { colors } from '@/src/theme/colors';
+import { useTheme } from '@/src/theme/ThemeProvider';
 
 /**
  * Employee layout — tab bar with Punch / History / My Pay.
@@ -18,12 +17,13 @@ import { colors } from '@/src/theme/colors';
 export default function EmployeeLayout() {
   const { t } = useTranslation();
   const { session, profile, isLoading, isProfileLoading } = useAuth();
+  const { theme } = useTheme();
 
   // Show loading spinner after login while checking session & profile role
   if (isLoading || isProfileLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-surface">
-        <ActivityIndicator size="large" color={colors.primary} />
+      <View style={{ backgroundColor: theme.background }} className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
@@ -37,7 +37,7 @@ export default function EmployeeLayout() {
     <Tabs
       tabBar={props => <CustomTabBar {...props} />}
       screenOptions={{
-        header: () => <CustomHeader title="Punch App" />,
+        headerShown: false,
       }}
     >
       <Tabs.Screen
@@ -45,7 +45,7 @@ export default function EmployeeLayout() {
         options={{
           title: t('tabs.employee.punch'),
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="punch-clock" size={size} color={color} />
+            <MaterialCommunityIcons name="gesture-tap-button" size={size} color={color} />
           ),
         }}
       />
@@ -54,7 +54,7 @@ export default function EmployeeLayout() {
         options={{
           title: t('tabs.employee.history'),
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="history" size={size} color={color} />
+            <MaterialCommunityIcons name="history" size={size} color={color} />
           ),
         }}
       />
@@ -63,17 +63,13 @@ export default function EmployeeLayout() {
         options={{
           title: t('tabs.employee.myPay'),
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="attach-money"  size={size} color={color} />
+            <MaterialCommunityIcons name="cash-multiple" size={size} color={color} />
           ),
         }}
       />
-      {/* Hide the correction screen from the tab bar */}
       <Tabs.Screen
         name="correction"
-        options={{
-          href: null,
-          title: t('correction.title'),
-        }}
+        options={{ href: null }}
       />
     </Tabs>
   );

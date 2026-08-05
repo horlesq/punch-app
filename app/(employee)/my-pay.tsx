@@ -12,12 +12,12 @@ import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from 'expo-router';
 
 import { useAuth } from '@/app/_layout';
+import { useTheme } from '@/src/theme/ThemeProvider';
 import { getEmployeePunches, type Punch } from '@/src/api/punches';
 import { getBusinessSettings } from '@/src/api/businessSettings';
 import { getEmployeePayPeriods } from '@/src/api/payPeriods';
 import { calculateWeekTotals } from '@/src/utils/payCalculations';
 import { MyPaySkeleton } from '@/src/components/ui/Skeleton';
-import { colors } from '@/src/theme/colors';
 
 /** Group shifts by ISO week (Mon–Sun). Returns weeks in reverse chronological order. */
 function groupByWeek(punches: Punch[]): { weekStart: Date; weekEnd: Date; shifts: Punch[] }[] {
@@ -74,6 +74,7 @@ interface WeekData {
 export default function MyPayScreen() {
   const { t } = useTranslation();
   const { profile } = useAuth();
+  const { theme } = useTheme();
 
   const [weeks, setWeeks] = useState<WeekData[]>([]);
   const [breakThreshold, setBreakThreshold] = useState(4);
@@ -168,8 +169,9 @@ export default function MyPayScreen() {
   function renderWeekCard({ item }: { item: WeekData }) {
     return (
       <View
-        className="bg-surface-container-lowest rounded-xl mx-4 mb-3 p-4"
+        className="rounded-xl mx-4 mb-3 p-4"
         style={{
+          backgroundColor: theme.surfaceContainerLowest,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.04,
@@ -179,20 +181,20 @@ export default function MyPayScreen() {
       >
         {/* Week header */}
         <View className="flex-row items-center justify-between mb-3">
-          <Text className="font-geist-semibold text-on-surface text-base">
+          <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-base">
             {item.isCurrent
               ? t('myPay.currentWeek')
               : t('myPay.weekOf', { date: formatWeekDate(item.weekStart) })}
           </Text>
           <View
-            className={`rounded-full px-3 py-1 ${
-              item.isPaid ? 'bg-success/15' : 'bg-on-surface/10'
-            }`}
+            style={{
+              backgroundColor: item.isPaid ? theme.success + '25' : theme.surfaceVariant,
+            }}
+            className="rounded-full px-3 py-1"
           >
             <Text
-              className={`font-geist-semibold text-xs ${
-                item.isPaid ? 'text-success' : 'text-on-surface'
-              }`}
+              style={{ color: item.isPaid ? theme.success : theme.textSecondary }}
+              className="font-geist-semibold text-xs"
             >
               {item.isPaid ? t('myPay.paid') : t('myPay.unpaid')}
             </Text>
@@ -203,19 +205,19 @@ export default function MyPayScreen() {
         <View className="flex-row justify-between">
           {/* Hours */}
           <View className="items-center flex-1">
-            <MaterialCommunityIcons name="clock-outline" size={20} color={colors.textSecondary} />
-            <Text className="font-geist-bold text-on-surface text-lg mt-1">
+            <MaterialCommunityIcons name="clock-outline" size={20} color={theme.textSecondary} />
+            <Text style={{ color: theme.textPrimary }} className="font-geist-bold text-lg mt-1">
               {t('myPay.totalHours', { hours: item.totalHours.toFixed(1) })}
             </Text>
           </View>
 
           {/* Divider */}
-          <View className="w-px bg-outline-variant self-stretch mx-4" />
+          <View style={{ backgroundColor: theme.borderLight }} className="w-px self-stretch mx-4" />
 
           {/* Pay */}
           <View className="items-center flex-1">
-            <MaterialCommunityIcons name="cash" size={20} color={colors.textSecondary} />
-            <Text className="font-geist-bold text-on-surface text-lg mt-1">
+            <MaterialCommunityIcons name="cash" size={20} color={theme.textSecondary} />
+            <Text style={{ color: theme.textPrimary }} className="font-geist-bold text-lg mt-1">
               {t('myPay.totalPay', { amount: `$${item.totalPay.toFixed(2)}` })}
             </Text>
           </View>
@@ -230,10 +232,10 @@ export default function MyPayScreen() {
 
   if (errorMessage) {
     return (
-      <View className="flex-1 justify-center items-center bg-background px-6">
-        <Text className="text-error text-center mb-4">{errorMessage}</Text>
+      <View style={{ backgroundColor: theme.background }} className="flex-1 justify-center items-center px-6">
+        <Text style={{ color: theme.error }} className="text-center mb-4">{errorMessage}</Text>
         <Pressable onPress={loadData} className="active:opacity-70">
-          <Text style={{ color: colors.accent }} className="font-geist-semibold">
+          <Text style={{ color: theme.accent }} className="font-geist-semibold">
             {t('common.retry')}
           </Text>
         </Pressable>
@@ -242,13 +244,13 @@ export default function MyPayScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
+    <View style={{ backgroundColor: theme.background }} className="flex-1">
       {/* Hourly rate header */}
-      <View className="mx-4 mt-4 mb-2 p-4 bg-primary rounded-xl">
-        <Text className="text-on-primary font-inter text-sm mb-1">
+      <View style={{ backgroundColor: theme.primary }} className="mx-4 mt-4 mb-2 p-4 rounded-xl">
+        <Text style={{ color: '#ffffff' }} className="font-inter text-sm mb-1 opacity-90">
           {t('myPay.hourlyRate')}
         </Text>
-        <Text className="text-on-primary font-geist-bold text-2xl">
+        <Text style={{ color: '#ffffff' }} className="font-geist-bold text-2xl">
           {t('myPay.perHour', { rate: `$${hourlyRate.toFixed(2)}` })}
         </Text>
       </View>
@@ -256,8 +258,8 @@ export default function MyPayScreen() {
       <ScrollView contentContainerStyle={{ paddingTop: 8, paddingBottom: 32 }}>
         {weeks.length === 0 ? (
           <View className="flex-1 justify-center items-center pt-20">
-            <MaterialCommunityIcons name="cash-remove" size={48} color={colors.textSecondary} />
-            <Text className="text-on-surface-variant text-base mt-4">
+            <MaterialCommunityIcons name="cash-remove" size={48} color={theme.textSecondary} />
+            <Text style={{ color: theme.textSecondary }} className="text-base mt-4">
               {t('myPay.noData')}
             </Text>
           </View>
