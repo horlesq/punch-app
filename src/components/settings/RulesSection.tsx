@@ -57,8 +57,6 @@ export function RulesSection({
       <View
         style={{
           backgroundColor: theme.surfaceContainerLowest,
-          borderColor: theme.borderLight + '40',
-          borderWidth: 1,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.05,
@@ -187,37 +185,7 @@ export function RulesSection({
           </Pressable>
         </View>
 
-        {/* Rules Save Feedback */}
-        {rulesSavedMsg && (
-          <View className="flex-row items-center mb-3 bg-success/10 rounded-xl px-4 py-2.5">
-            <MaterialCommunityIcons
-              name="check-circle"
-              size={16}
-              color={theme.success}
-            />
-            <Text
-              style={{ color: theme.success }}
-              className="font-geist-medium text-sm ml-2"
-            >
-              {rulesSavedMsg}
-            </Text>
-          </View>
-        )}
-        {rulesErrorMsg && (
-          <View className="flex-row items-center mb-3 bg-error/10 rounded-xl px-4 py-2.5">
-            <MaterialCommunityIcons
-              name="alert-circle"
-              size={16}
-              color={theme.error}
-            />
-            <Text
-              style={{ color: theme.error }}
-              className="font-geist-medium text-sm ml-2"
-            >
-              {rulesErrorMsg}
-            </Text>
-          </View>
-        )}
+
 
         {/* Save Rules Button */}
         <Pressable

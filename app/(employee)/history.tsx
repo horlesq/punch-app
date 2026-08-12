@@ -18,6 +18,7 @@ import { getPendingCorrections, type PunchCorrection } from '@/src/api/correctio
 import { getBusinessSettings } from '@/src/api/businessSettings';
 import { calculateShiftHours } from '@/src/utils/payCalculations';
 import { HistorySkeleton } from '@/src/components/ui/Skeleton';
+import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
 
 export default function HistoryScreen() {
   const { t } = useTranslation();
@@ -140,8 +141,6 @@ export default function HistoryScreen() {
         className="rounded-xl mx-4 mb-3 p-4"
         style={{
           backgroundColor: theme.surfaceContainerLowest,
-          borderColor: theme.borderLight + '40',
-          borderWidth: 1,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.04,
@@ -274,13 +273,11 @@ export default function HistoryScreen() {
   }
 
   return (
-    <View style={{ backgroundColor: theme.background }} className="flex-1">
-      <ScrollView contentContainerStyle={{ paddingTop: 16, paddingBottom: 32 }}>
+    <ScreenWrapper>
+      <View className="pt-4">
         <Pressable
           style={{
             backgroundColor: theme.surfaceContainerLowest,
-            borderColor: theme.borderLight + '40',
-            borderWidth: 1,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.04,
@@ -310,7 +307,7 @@ export default function HistoryScreen() {
             </React.Fragment>
           ))
         )}
-      </ScrollView>
-    </View>
+      </View>
+    </ScreenWrapper>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -10,13 +10,14 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { useFocusEffect } from 'expo-router';
 
 import { signInWithEmail } from '@/src/api/auth';
 import { useTheme } from '@/src/theme/ThemeProvider';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
-  const { theme } = useTheme();
+  const { theme, refreshTheme } = useTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +25,18 @@ export default function LoginScreen() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
   const [logoError, setLogoError] = useState(false);
+
+  // Refresh theme branding whenever login screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshTheme();
+    }, [refreshTheme])
+  );
+
+  // Reset logo error state when theme logoUrl updates
+  useEffect(() => {
+    setLogoError(false);
+  }, [theme.logoUrl]);
   
   // Focus states for input styling
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -71,8 +84,10 @@ export default function LoginScreen() {
             {/* Show business logo if set, otherwise show placeholder icon */}
             {theme.logoUrl && !logoError ? (
               <Image
+                key={theme.logoUrl}
                 source={{ uri: theme.logoUrl }}
                 style={{ width: 64, height: 64, borderRadius: 32 }}
+                resizeMode="cover"
                 className="mb-6"
                 onError={() => setLogoError(true)}
               />

@@ -26,6 +26,7 @@ import { writeAuditEntry } from '@/src/api/auditLog';
 import { calculateWeekTotals } from '@/src/utils/payCalculations';
 import { PayPeriodsSkeleton } from '@/src/components/ui/Skeleton';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
+import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
 
 /** Get the Monday of the ISO week containing `date`. */
 function getWeekMonday(date: Date): Date {
@@ -267,72 +268,70 @@ export default function PayPeriodsScreen() {
   }
 
   return (
-    <View style={{ backgroundColor: theme.background }} className="flex-1">
+    <ScreenWrapper>
       {/* Week Selector */}
-      <View className="flex-row items-center justify-between mx-4 mt-4 mb-2 p-3 rounded-xl"
-        style={{
-          backgroundColor: theme.surfaceContainerLowest,
-          borderColor: theme.borderLight + '40',
-          borderWidth: 1,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.04,
-          shadowRadius: 4,
-          elevation: 2,
-        }}
-      >
-        <Pressable
-          style={{ backgroundColor: theme.surfaceVariant }}
-          className="w-10 h-10 rounded-full justify-center items-center active:opacity-60"
-          onPress={() => navigateWeek(-1)}
+        <View className="flex-row items-center justify-between mx-4 mt-4 mb-2 p-3 rounded-xl"
+          style={{
+            backgroundColor: theme.surfaceContainerLowest,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.04,
+            shadowRadius: 4,
+            elevation: 2,
+          }}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color={theme.textPrimary} />
-        </Pressable>
+          <Pressable
+            style={{ backgroundColor: theme.surfaceVariant }}
+            className="w-10 h-10 rounded-full justify-center items-center active:opacity-60"
+            onPress={() => navigateWeek(-1)}
+          >
+            <MaterialCommunityIcons name="chevron-left" size={24} color={theme.textPrimary} />
+          </Pressable>
 
-        <View className="items-center">
-          <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-base">
-            {t('admin.payPeriods.weekRange', {
-              start: formatShortDate(weekMonday),
-              end: formatShortDate(weekSunday),
-            })}
-          </Text>
-          {isCurrentWeek && (
-            <View style={{ backgroundColor: theme.accent + '25' }} className="flex-row items-center px-2.5 py-0.5 rounded-full mt-1">
-              <MaterialCommunityIcons name="clock-outline" size={12} color={theme.accent} />
-              <Text style={{ color: theme.accent }} className="font-geist-medium text-[11px] ml-1">
-                {t('admin.payPeriods.currentWeek')}
-              </Text>
-            </View>
-          )}
-          {isFutureWeek && (
-            <View className="flex-row items-center bg-purple-500/15 px-2.5 py-0.5 rounded-full mt-1">
-              <MaterialCommunityIcons name="calendar-clock" size={12} color="#8B5CF6" />
-              <Text className="font-geist-medium text-[11px] text-purple-400 ml-1">
-                {t('admin.payPeriods.futureWeek')}
-              </Text>
-            </View>
-          )}
+          <View className="items-center">
+            <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-base">
+              {t('admin.payPeriods.weekRange', {
+                start: formatShortDate(weekMonday),
+                end: formatShortDate(weekSunday),
+              })}
+            </Text>
+            {isCurrentWeek && (
+              <View style={{ backgroundColor: theme.accent + '25' }} className="flex-row items-center px-2.5 py-0.5 rounded-full mt-1">
+                <MaterialCommunityIcons name="clock-outline" size={12} color={theme.accent} />
+                <Text style={{ color: theme.accent }} className="font-geist-medium text-[11px] ml-1">
+                  {t('admin.payPeriods.currentWeek')}
+                </Text>
+              </View>
+            )}
+            {isFutureWeek && (
+              <View className="flex-row items-center bg-purple-500/15 px-2.5 py-0.5 rounded-full mt-1">
+                <MaterialCommunityIcons name="calendar-clock" size={12} color="#8B5CF6" />
+                <Text className="font-geist-medium text-[11px] text-purple-400 ml-1">
+                  {t('admin.payPeriods.futureWeek')}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          <Pressable
+            style={{ backgroundColor: theme.surfaceVariant }}
+            className="w-10 h-10 rounded-full justify-center items-center active:opacity-60"
+            onPress={() => navigateWeek(1)}
+          >
+            <MaterialCommunityIcons name="chevron-right" size={24} color={theme.textPrimary} />
+          </Pressable>
         </View>
 
-        <Pressable
-          style={{ backgroundColor: theme.surfaceVariant }}
-          className="w-10 h-10 rounded-full justify-center items-center active:opacity-60"
-          onPress={() => navigateWeek(1)}
-        >
-          <MaterialCommunityIcons name="chevron-right" size={24} color={theme.textPrimary} />
-        </Pressable>
-      </View>
+        {/* Status Messages */}
+        {successMessage && (
+          <Text style={{ color: theme.success }} className="text-center text-sm mb-2 mx-4">{successMessage}</Text>
+        )}
+        {errorMessage && (
+          <Text style={{ color: theme.error }} className="text-center text-sm mb-2 mx-4">{errorMessage}</Text>
+        )}
 
-      {/* Status Messages */}
-      {successMessage && (
-        <Text style={{ color: theme.success }} className="text-center text-sm mb-2 mx-4">{successMessage}</Text>
-      )}
-      {errorMessage && (
-        <Text style={{ color: theme.error }} className="text-center text-sm mb-2 mx-4">{errorMessage}</Text>
-      )}
-
-      {/* Employee Pay Table */}
-      <ScrollView contentContainerStyle={{ paddingTop: 8, paddingBottom: 32 }}>
+        {/* Employee Pay Table */}
+        <View className="pt-2">
         {rows.length === 0 ? (
           <View className="flex-1 justify-center items-center pt-20">
             <MaterialCommunityIcons name="account-group-outline" size={48} color={theme.textSecondary} />
@@ -350,8 +349,6 @@ export default function PayPeriodsScreen() {
               }`}
               style={{
                 backgroundColor: theme.surfaceContainerLowest,
-                borderColor: theme.borderLight + '40',
-                borderWidth: 1,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 1 },
                 shadowOpacity: 0.04,
@@ -450,32 +447,32 @@ export default function PayPeriodsScreen() {
             </Pressable>
           ))
         )}
-      </ScrollView>
+        </View>
 
-      {/* Mark as Paid Confirmation Modal */}
-      <ConfirmModal
-        visible={showPayModal}
-        title={t('admin.payPeriods.markAsPaidTitle')}
-        message={
-          payTarget
-            ? t('admin.payPeriods.markAsPaidMessage', {
-                name: payTarget.employee.full_name,
-                start: formatShortDate(weekMonday),
-                end: formatShortDate(weekSunday),
-                amount: payTarget.totalPay.toFixed(2),
-                hours: payTarget.totalHours.toFixed(1),
-              })
-            : ''
-        }
-        confirmText={t('admin.payPeriods.markAsPaid')}
-        cancelText={t('common.cancel')}
-        isLoading={isMarking}
-        onConfirm={handleConfirmMarkAsPaid}
-        onCancel={() => {
-          setShowPayModal(false);
-          setPayTarget(null);
-        }}
-      />
-    </View>
-  );
-}
+        {/* Mark as Paid Confirmation Modal */}
+        <ConfirmModal
+          visible={showPayModal}
+          title={t('admin.payPeriods.markAsPaidTitle')}
+          message={
+            payTarget
+              ? t('admin.payPeriods.markAsPaidMessage', {
+                  name: payTarget.employee.full_name,
+                  start: formatShortDate(weekMonday),
+                  end: formatShortDate(weekSunday),
+                  amount: payTarget.totalPay.toFixed(2),
+                  hours: payTarget.totalHours.toFixed(1),
+                })
+              : ''
+          }
+          confirmText={t('admin.payPeriods.markAsPaid')}
+          cancelText={t('common.cancel')}
+          isLoading={isMarking}
+          onConfirm={handleConfirmMarkAsPaid}
+          onCancel={() => {
+            setShowPayModal(false);
+            setPayTarget(null);
+          }}
+        />
+      </ScreenWrapper>
+    );
+  }

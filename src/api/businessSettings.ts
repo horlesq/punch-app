@@ -86,24 +86,27 @@ export async function updateRules(
  * Returns the public URL of the uploaded image.
  */
 export async function uploadLogo(
-  imageUri: string
+  imageUri: string,
+  providedMimeType?: string
 ): Promise<{ url: string | null; error: Error | null }> {
-  // Determine file extension from URI
+  // Determine file extension from providedMimeType or URI
   const uriLower = imageUri.toLowerCase();
-  let ext = 'jpg';
-  let mimeType = 'image/jpeg';
+  const lowerMime = (providedMimeType || '').toLowerCase();
+  let ext = 'png';
+  let mimeType = providedMimeType || 'image/png';
 
-  if (uriLower.endsWith('.png') || uriLower.includes('.png')) {
-    ext = 'png';
-    mimeType = 'image/png';
-  } else if (
-    uriLower.endsWith('.jpg') ||
-    uriLower.endsWith('.jpeg') ||
-    uriLower.includes('.jpg') ||
-    uriLower.includes('.jpeg')
-  ) {
+  if (lowerMime.includes('jpeg') || lowerMime.includes('jpg')) {
     ext = 'jpg';
     mimeType = 'image/jpeg';
+  } else if (lowerMime.includes('png')) {
+    ext = 'png';
+    mimeType = 'image/png';
+  } else if (uriLower.includes('.jpg') || uriLower.includes('.jpeg')) {
+    ext = 'jpg';
+    mimeType = 'image/jpeg';
+  } else if (uriLower.includes('.png')) {
+    ext = 'png';
+    mimeType = 'image/png';
   }
 
   // Fetch the image file as a blob for upload
@@ -122,11 +125,12 @@ export async function uploadLogo(
   }
 
   // Validate file type
-  const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-  if (blob.type && !validTypes.includes(blob.type)) {
-    // Check blob type if available; otherwise trust the extension
-    const extValid = ['jpg', 'jpeg', 'png'].includes(ext);
-    if (!extValid) {
+  const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+  const blobTypeLower = (blob.type || '').toLowerCase();
+  if (blobTypeLower && !validTypes.includes(blobTypeLower)) {
+    // If blob type is provided and not in valid types, check if extension or providedMimeType is valid
+    const isMimeValid = validTypes.some((t) => lowerMime.includes(t.split('/')[1]));
+    if (!isMimeValid) {
       return { url: null, error: new Error('INVALID_FILE_TYPE') };
     }
   }

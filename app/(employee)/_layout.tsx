@@ -6,7 +6,6 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
 import { CustomTabBar } from '@/src/components/ui/CustomTabBar';
-import { CustomHeader } from '@/src/components/ui/CustomHeader';
 
 import { useAuth } from '@/app/_layout';
 import { useTheme } from '@/src/theme/ThemeProvider';

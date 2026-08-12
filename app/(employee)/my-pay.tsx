@@ -18,6 +18,7 @@ import { getBusinessSettings } from '@/src/api/businessSettings';
 import { getEmployeePayPeriods } from '@/src/api/payPeriods';
 import { calculateWeekTotals } from '@/src/utils/payCalculations';
 import { MyPaySkeleton } from '@/src/components/ui/Skeleton';
+import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
 
 /** Group shifts by ISO week (Mon–Sun). Returns weeks in reverse chronological order. */
 function groupByWeek(punches: Punch[]): { weekStart: Date; weekEnd: Date; shifts: Punch[] }[] {
@@ -244,7 +245,7 @@ export default function MyPayScreen() {
   }
 
   return (
-    <View style={{ backgroundColor: theme.background }} className="flex-1">
+    <ScreenWrapper>
       {/* Hourly rate header */}
       <View style={{ backgroundColor: theme.primary }} className="mx-4 mt-4 mb-2 p-4 rounded-xl">
         <Text style={{ color: '#ffffff' }} className="font-inter text-sm mb-1 opacity-90">
@@ -255,22 +256,22 @@ export default function MyPayScreen() {
         </Text>
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingTop: 8, paddingBottom: 32 }}>
-        {weeks.length === 0 ? (
-          <View className="flex-1 justify-center items-center pt-20">
-            <MaterialCommunityIcons name="cash-remove" size={48} color={theme.textSecondary} />
-            <Text style={{ color: theme.textSecondary }} className="text-base mt-4">
-              {t('myPay.noData')}
-            </Text>
-          </View>
-        ) : (
-          weeks.map((item) => (
-            <React.Fragment key={item.weekStart.toISOString()}>
-              {renderWeekCard({ item })}
-            </React.Fragment>
-          ))
-        )}
-      </ScrollView>
-    </View>
+      <View className="pt-2">
+      {weeks.length === 0 ? (
+        <View className="flex-1 justify-center items-center pt-20">
+          <MaterialCommunityIcons name="cash-remove" size={48} color={theme.textSecondary} />
+          <Text style={{ color: theme.textSecondary }} className="text-base mt-4">
+            {t('myPay.noData')}
+          </Text>
+        </View>
+      ) : (
+        weeks.map((item) => (
+          <React.Fragment key={item.weekStart.toISOString()}>
+            {renderWeekCard({ item })}
+          </React.Fragment>
+        ))
+      )}
+      </View>
+    </ScreenWrapper>
   );
 }

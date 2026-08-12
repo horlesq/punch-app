@@ -25,6 +25,7 @@ import {
 import { getBusinessSettings } from '@/src/api/businessSettings';
 import { calculateShiftHours } from '@/src/utils/payCalculations';
 import { PunchSkeleton } from '@/src/components/ui/Skeleton';
+import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -169,14 +170,10 @@ export default function PunchScreen() {
   }
 
   return (
-    <ScrollView
-      style={{ backgroundColor: theme.background }}
-      className="flex-1"
-      contentContainerStyle={{ alignItems: 'center', paddingBottom: 40 }}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScreenWrapper contentContainerStyle={{ paddingBottom: 40 }}>
+      <View className="items-center w-full">
       {/* Header */}
-      <View className="items-center mt-8 mb-10">
+      <View className="items-center mt-6 mb-8">
           <Text style={{ color: theme.textPrimary }} className="font-geist-bold text-2xl mb-1.5">
             {getGreeting()}, {profile?.full_name?.split(' ')[0]}!
           </Text>
@@ -188,15 +185,15 @@ export default function PunchScreen() {
       {/* Punch Button & Status */}
       <View className="items-center w-full mb-12">
         <Pressable
-          className="w-[260px] h-[260px] rounded-full justify-center items-center"
-          style={({ pressed }) => ({
-            opacity: pressed || isSubmitting ? 0.85 : 1,
+          className="w-[260px] h-[260px] rounded-full justify-center items-center active:opacity-85"
+          style={{
             backgroundColor: isClockedIn ? theme.error : theme.primary,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.25,
             shadowRadius: 10,
-          })}
+            elevation: 4,
+          }}
           onPress={handlePunch}
           disabled={isSubmitting}
         >
@@ -227,8 +224,6 @@ export default function PunchScreen() {
             shadowOpacity: 0.05,
             shadowRadius: 5,
             elevation: 2,
-            borderWidth: 1,
-            borderColor: theme.borderLight,
           }}
         >
           <View style={{ backgroundColor: isClockedIn ? theme.success : theme.textSecondary }} className="w-2.5 h-2.5 rounded-full mr-2.5" />
@@ -268,8 +263,6 @@ export default function PunchScreen() {
             shadowOpacity: 0.05,
             shadowRadius: 8,
             elevation: 2,
-            borderWidth: 1,
-            borderColor: theme.borderLight,
           }}
         >
           {recentPunches.length === 0 ? (
@@ -320,6 +313,7 @@ export default function PunchScreen() {
           )}
         </View>
       </View>
-    </ScrollView>
+      </View>
+    </ScreenWrapper>
   );
 }

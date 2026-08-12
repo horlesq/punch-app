@@ -24,6 +24,8 @@ import {
   DEFAULT_PRIMARY_LIGHT_MODE,
 } from '@/src/theme/colors';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
+import { Toast } from '@/src/components/ui/Toast';
+import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
 import { BrandingSection } from '@/src/components/settings/BrandingSection';
 import { RulesSection } from '@/src/components/settings/RulesSection';
 
@@ -147,13 +149,19 @@ export default function SettingsScreen() {
 
     const asset = result.assets[0];
     const uri = asset.uri;
-
+    const mimeType = (asset.mimeType || '').toLowerCase();
     const uriLower = uri.toLowerCase();
-    if (
-      !uriLower.includes('.jpg') &&
-      !uriLower.includes('.jpeg') &&
-      !uriLower.includes('.png')
-    ) {
+
+    const isImage =
+      mimeType.startsWith('image/') ||
+      uriLower.includes('.png') ||
+      uriLower.includes('.jpg') ||
+      uriLower.includes('.jpeg') ||
+      uriLower.includes('.webp') ||
+      uriLower.startsWith('blob:') ||
+      uriLower.startsWith('data:image/');
+
+    if (!isImage) {
       setBrandingErrorMsg(t('settings.branding.errorUploadType'));
       return;
     }
@@ -161,7 +169,7 @@ export default function SettingsScreen() {
     setIsUploadingLogo(true);
     setBrandingErrorMsg(null);
 
-    const { url, error } = await uploadLogo(uri);
+    const { url, error } = await uploadLogo(uri, asset.mimeType);
 
     setIsUploadingLogo(false);
 
@@ -258,69 +266,85 @@ export default function SettingsScreen() {
     return <SettingsSkeleton theme={theme} />;
   }
 
+  const activeToast = brandingErrorMsg
+    ? { type: 'error' as const, message: brandingErrorMsg, onDismiss: () => setBrandingErrorMsg(null) }
+    : brandingSavedMsg
+    ? { type: 'success' as const, message: brandingSavedMsg, onDismiss: () => setBrandingSavedMsg(null) }
+    : rulesErrorMsg
+    ? { type: 'error' as const, message: rulesErrorMsg, onDismiss: () => setRulesErrorMsg(null) }
+    : rulesSavedMsg
+    ? { type: 'success' as const, message: rulesSavedMsg, onDismiss: () => setRulesSavedMsg(null) }
+    : null;
+
   return (
-    <ScrollView
-      style={{ backgroundColor: theme.background }}
-      className="flex-1"
-      contentContainerClassName="py-4 pb-12"
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Branding & Styling Section */}
-      <BrandingSection
-        theme={theme}
-        businessName={businessName}
-        setBusinessName={setBusinessName}
-        logoUrl={logoUrl}
-        handlePickLogo={handlePickLogo}
-        handleRemoveLogo={handleRemoveLogo}
-        isUploadingLogo={isUploadingLogo}
-        themeMode={themeMode}
-        handleThemeModeChange={handleThemeModeChange}
-        primaryColor={primaryColor}
-        setPrimaryColor={setPrimaryColor}
-        accentColor={accentColor}
-        setAccentColor={setAccentColor}
-        showPrimaryHexInput={showPrimaryHexInput}
-        setShowPrimaryHexInput={setShowPrimaryHexInput}
-        primaryHexInput={primaryHexInput}
-        setPrimaryHexInput={setPrimaryHexInput}
-        showAccentHexInput={showAccentHexInput}
-        setShowAccentHexInput={setShowAccentHexInput}
-        accentHexInput={accentHexInput}
-        setAccentHexInput={setAccentHexInput}
-        handleSaveBranding={handleSaveBranding}
-        isSavingBranding={isSavingBranding}
-        brandingSavedMsg={brandingSavedMsg}
-        brandingErrorMsg={brandingErrorMsg}
-        setShowResetModal={setShowResetModal}
-      />
+    <ScreenWrapper>
+      {activeToast && (
+        <Toast
+          visible={true}
+          message={activeToast.message}
+          type={activeToast.type}
+          onDismiss={activeToast.onDismiss}
+        />
+      )}
 
-      {/* Business Rules Section */}
-      <RulesSection
-        theme={theme}
-        breakThreshold={breakThreshold}
-        setBreakThreshold={setBreakThreshold}
-        breakDuration={breakDuration}
-        setBreakDuration={setBreakDuration}
-        correctionMode={correctionMode}
-        setCorrectionMode={setCorrectionMode}
-        handleSaveRules={handleSaveRules}
-        isSavingRules={isSavingRules}
-        rulesSavedMsg={rulesSavedMsg}
-        rulesErrorMsg={rulesErrorMsg}
-      />
+      <View className="py-4">
+        {/* Branding & Styling Section */}
+        <BrandingSection
+          theme={theme}
+          businessName={businessName}
+          setBusinessName={setBusinessName}
+          logoUrl={logoUrl}
+          handlePickLogo={handlePickLogo}
+          handleRemoveLogo={handleRemoveLogo}
+          isUploadingLogo={isUploadingLogo}
+          themeMode={themeMode}
+          handleThemeModeChange={handleThemeModeChange}
+          primaryColor={primaryColor}
+          setPrimaryColor={setPrimaryColor}
+          accentColor={accentColor}
+          setAccentColor={setAccentColor}
+          showPrimaryHexInput={showPrimaryHexInput}
+          setShowPrimaryHexInput={setShowPrimaryHexInput}
+          primaryHexInput={primaryHexInput}
+          setPrimaryHexInput={setPrimaryHexInput}
+          showAccentHexInput={showAccentHexInput}
+          setShowAccentHexInput={setShowAccentHexInput}
+          accentHexInput={accentHexInput}
+          setAccentHexInput={setAccentHexInput}
+          handleSaveBranding={handleSaveBranding}
+          isSavingBranding={isSavingBranding}
+          brandingSavedMsg={brandingSavedMsg}
+          brandingErrorMsg={brandingErrorMsg}
+          setShowResetModal={setShowResetModal}
+        />
 
-      {/* Reset Confirmation Modal */}
-      <ConfirmModal
-        visible={showResetModal}
-        title={t('settings.branding.resetConfirmTitle')}
-        message={t('settings.branding.resetConfirmMessage')}
-        confirmText={t('settings.branding.reset')}
-        isDestructive={true}
-        onConfirm={handleConfirmResetToDefaults}
-        onCancel={() => setShowResetModal(false)}
-      />
-    </ScrollView>
+        {/* Business Rules Section */}
+        <RulesSection
+          theme={theme}
+          breakThreshold={breakThreshold}
+          setBreakThreshold={setBreakThreshold}
+          breakDuration={breakDuration}
+          setBreakDuration={setBreakDuration}
+          correctionMode={correctionMode}
+          setCorrectionMode={setCorrectionMode}
+          handleSaveRules={handleSaveRules}
+          isSavingRules={isSavingRules}
+          rulesSavedMsg={rulesSavedMsg}
+          rulesErrorMsg={rulesErrorMsg}
+        />
+
+        {/* Reset Confirmation Modal */}
+        <ConfirmModal
+          visible={showResetModal}
+          title={t('settings.branding.resetConfirmTitle')}
+          message={t('settings.branding.resetConfirmMessage')}
+          confirmText={t('settings.branding.reset')}
+          isDestructive={true}
+          onConfirm={handleConfirmResetToDefaults}
+          onCancel={() => setShowResetModal(false)}
+        />
+      </View>
+    </ScreenWrapper>
   );
 }
 

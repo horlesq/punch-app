@@ -126,8 +126,6 @@ export function BrandingSection({
       <View
         style={{
           backgroundColor: theme.surfaceContainerLowest,
-          borderColor: theme.borderLight + '40',
-          borderWidth: 1,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.05,
@@ -153,7 +151,7 @@ export function BrandingSection({
           className="rounded-xl px-4 py-3 font-geist text-sm mb-5"
           value={businessName}
           onChangeText={setBusinessName}
-          placeholder="Punch App"
+          placeholder={t('settings.branding.businessNamePlaceholder')}
           placeholderTextColor={theme.textSecondary}
           maxLength={40}
         />
@@ -329,7 +327,6 @@ export function BrandingSection({
           <View
             style={{
               backgroundColor: previewCardBg,
-              borderColor: previewBorder,
             }}
             className="rounded-xl p-3 border"
           >
@@ -413,37 +410,7 @@ export function BrandingSection({
           </View>
         </View>
 
-        {/* Branding Save Feedback */}
-        {brandingSavedMsg && (
-          <View className="flex-row items-center mb-3 bg-success/10 rounded-xl px-4 py-2.5">
-            <MaterialCommunityIcons
-              name="check-circle"
-              size={16}
-              color={theme.success}
-            />
-            <Text
-              style={{ color: theme.success }}
-              className="font-geist-medium text-sm ml-2"
-            >
-              {brandingSavedMsg}
-            </Text>
-          </View>
-        )}
-        {brandingErrorMsg && (
-          <View className="flex-row items-center mb-3 bg-error/10 rounded-xl px-4 py-2.5">
-            <MaterialCommunityIcons
-              name="alert-circle"
-              size={16}
-              color={theme.error}
-            />
-            <Text
-              style={{ color: theme.error }}
-              className="font-geist-medium text-sm ml-2"
-            >
-              {brandingErrorMsg}
-            </Text>
-          </View>
-        )}
+
 
         {/* Save Branding Button */}
         <Pressable

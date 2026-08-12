@@ -244,7 +244,7 @@ export function DashboardSkeleton() {
       {/* Currently Clocked In Section */}
       <View className="mx-4 mb-6">
         <Skeleton width={150} height={20} borderRadius={6} className="mb-3" />
-        <View style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight + '40', borderWidth: 1 }} className="rounded-xl overflow-hidden p-4">
+        <View style={{ backgroundColor: theme.surfaceContainerLowest }} className="rounded-xl overflow-hidden p-4">
           {[1, 2].map((key) => (
             <View key={key} style={{ borderBottomColor: theme.borderLight + '40', borderBottomWidth: key === 1 ? 1 : 0 }} className="flex-row items-center justify-between py-2">
               <View className="flex-row items-center flex-1">

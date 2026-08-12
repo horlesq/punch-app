@@ -16,6 +16,7 @@ import { useTheme } from '@/src/theme/ThemeProvider';
 import { getAllOpenPunches, type PunchWithEmployee } from '@/src/api/punches';
 import { getPendingCorrectionsCount } from '@/src/api/corrections';
 import { DashboardSkeleton } from '@/src/components/ui/Skeleton';
+import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
@@ -78,13 +79,9 @@ export default function DashboardScreen() {
   }
 
   return (
-    <ScrollView
-      style={{ backgroundColor: theme.background }}
-      className="flex-1"
-      contentContainerStyle={{ paddingTop: 16, paddingBottom: 32 }}
-    >
+    <ScreenWrapper>
       {/* Currently Clocked In Section */}
-      <View className="mx-4 mb-6">
+      <View className="mx-4 mb-6 mt-4">
         <Text style={{ color: theme.textPrimary }} className="font-geist-bold text-lg mb-3">
           {t('admin.dashboard.clockedIn')}
         </Text>
@@ -93,8 +90,6 @@ export default function DashboardScreen() {
           <View
             style={{
               backgroundColor: theme.surfaceContainerLowest,
-              borderColor: theme.borderLight + '40',
-              borderWidth: 1,
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.04,
@@ -112,8 +107,6 @@ export default function DashboardScreen() {
           <View
             style={{
               backgroundColor: theme.surfaceContainerLowest,
-              borderColor: theme.borderLight + '40',
-              borderWidth: 1,
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.04,
@@ -164,8 +157,6 @@ export default function DashboardScreen() {
         <Pressable
           style={{
             backgroundColor: theme.surfaceContainerLowest,
-            borderColor: theme.borderLight + '40',
-            borderWidth: 1,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.04,
@@ -208,6 +199,6 @@ export default function DashboardScreen() {
           </View>
         </Pressable>
       </View>
-    </ScrollView>
+    </ScreenWrapper>
   );
 }

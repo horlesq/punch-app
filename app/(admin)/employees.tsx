@@ -16,6 +16,7 @@ import { useTheme } from '@/src/theme/ThemeProvider';
 import { getAllEmployees, type Profile } from '@/src/api/profiles';
 import { UserAvatar } from '@/src/components/ui/UserAvatar';
 import { EmployeesSkeleton } from '@/src/components/ui/Skeleton';
+import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
 
 export default function EmployeesScreen() {
   const { t } = useTranslation();
@@ -65,14 +66,12 @@ export default function EmployeesScreen() {
   }
 
   return (
-    <View style={{ backgroundColor: theme.background }} className="flex-1">
-      <ScrollView contentContainerStyle={{ paddingTop: 16, paddingBottom: 32 }}>
+    <ScreenWrapper>
+      <View className="pt-4">
         {/* Add Employee Button */}
         <Pressable
           style={{
             backgroundColor: theme.surfaceContainerLowest,
-            borderColor: theme.borderLight + '40',
-            borderWidth: 1,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.04,
@@ -102,8 +101,6 @@ export default function EmployeesScreen() {
               key={employee.id}
               style={{
                 backgroundColor: theme.surfaceContainerLowest,
-                borderColor: theme.borderLight + '40',
-                borderWidth: 1,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 1 },
                 shadowOpacity: 0.04,
@@ -152,7 +149,7 @@ export default function EmployeesScreen() {
             </Pressable>
           ))
         )}
-      </ScrollView>
-    </View>
+      </View>
+    </ScreenWrapper>
   );
 }

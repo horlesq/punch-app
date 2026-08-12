@@ -175,8 +175,6 @@ export default function CorrectionsReviewScreen() {
               key={correction.id}
               style={{
                 backgroundColor: theme.surfaceContainerLowest,
-                borderColor: theme.borderLight + '40',
-                borderWidth: 1,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 1 },
                 shadowOpacity: 0.04,

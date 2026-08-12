@@ -45,8 +45,11 @@ export default function ProfileScreen() {
       <View
         style={{
           backgroundColor: theme.surfaceContainerLowest,
-          borderColor: theme.borderLight + '40',
-          borderWidth: 1,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.04,
+          shadowRadius: 4,
+          elevation: 2,
         }}
         className="w-full rounded-xl p-4 mb-6"
       >
