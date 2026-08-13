@@ -164,8 +164,8 @@ export default function EmployeeDetailScreen() {
 
   if (errorMessage && !employee) {
     return (
-      <View className="flex-1 justify-center items-center bg-background px-6">
-        <Text className="text-error text-center mb-4">{errorMessage}</Text>
+      <View style={{ backgroundColor: theme.background }} className="flex-1 justify-center items-center px-6">
+        <Text style={{ color: theme.error }} className="text-center mb-4">{errorMessage}</Text>
         <Pressable onPress={() => router.back()} className="active:opacity-70">
           <Text style={{ color: theme.accent }} className="font-geist-semibold">
             {t('common.cancel')}
@@ -179,17 +179,19 @@ export default function EmployeeDetailScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-background"
+      style={{ backgroundColor: theme.background }}
+      className="flex-1"
       contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
     >
-      <Text className="text-on-surface font-geist-semibold text-2xl mb-6">
+      <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-2xl mb-6">
         {t('admin.employeeDetail.title')}
       </Text>
 
       {/* Pending Corrections Notice */}
       {hasPendingCorrections && (
         <Pressable
-          className="bg-warning/10 rounded-xl p-4 mb-6 flex-row items-center active:opacity-80"
+          className="rounded-xl p-4 mb-6 flex-row items-center active:opacity-80"
+          style={{ backgroundColor: theme.warning + '15' }}
           onPress={() => router.push('/(admin)/corrections-review')}
         >
           <MaterialCommunityIcons name="alert-circle-outline" size={20} color={theme.warning} />
@@ -207,13 +209,14 @@ export default function EmployeeDetailScreen() {
 
       {/* Status Badge */}
       <View className="mb-6">
-        <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+        <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
           {t('admin.employeeDetail.status')}
         </Text>
         <View
-          className={`self-start rounded-full px-4 py-2 ${
-            employee.is_active ? 'bg-success/15' : 'bg-error/15'
-          }`}
+          style={{
+            backgroundColor: employee.is_active ? theme.success + '20' : theme.error + '20',
+          }}
+          className="self-start rounded-full px-4 py-2"
         >
           <Text
             style={{ color: employee.is_active ? theme.success : theme.error }}
@@ -229,11 +232,11 @@ export default function EmployeeDetailScreen() {
       {/* Email */}
       {employee.email && (
         <View className="mb-6">
-          <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+          <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
             {t('admin.employeeDetail.email')}
           </Text>
-          <View className="bg-surface-container-lowest/60 rounded-xl p-4">
-            <Text className="text-on-surface-variant font-inter text-base">
+          <View style={{ backgroundColor: theme.surfaceContainerLowest }} className="rounded-xl p-4">
+            <Text style={{ color: theme.textPrimary }} className="font-inter text-base">
               {employee.email}
             </Text>
           </View>
@@ -242,11 +245,17 @@ export default function EmployeeDetailScreen() {
 
       {/* Full Name */}
       <View className="mb-6">
-        <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+        <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
           {t('admin.employeeDetail.fullName')}
         </Text>
         <TextInput
-          className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
+          style={{
+            backgroundColor: theme.surfaceContainerLowest,
+            color: theme.textPrimary,
+            borderColor: theme.borderLight + '60',
+            borderWidth: 1,
+          }}
+          className="rounded-xl p-4 font-inter text-base"
           value={editName}
           onChangeText={setEditName}
           placeholderTextColor={theme.textSecondary}
@@ -255,11 +264,17 @@ export default function EmployeeDetailScreen() {
 
       {/* Hourly Rate */}
       <View className="mb-6">
-        <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+        <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
           {t('admin.employeeDetail.hourlyRate')}
         </Text>
         <TextInput
-          className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
+          style={{
+            backgroundColor: theme.surfaceContainerLowest,
+            color: theme.textPrimary,
+            borderColor: theme.borderLight + '60',
+            borderWidth: 1,
+          }}
+          className="rounded-xl p-4 font-inter text-base"
           value={editRate}
           onChangeText={setEditRate}
           keyboardType="decimal-pad"
@@ -272,7 +287,7 @@ export default function EmployeeDetailScreen() {
         <Text style={{ color: theme.success }} className="text-center text-sm mb-4">{successMessage}</Text>
       )}
       {errorMessage && (
-        <Text className="text-error text-center text-sm mb-4">{errorMessage}</Text>
+        <Text style={{ color: theme.error }} className="text-center text-sm mb-4">{errorMessage}</Text>
       )}
 
       {/* Save Button */}
@@ -283,9 +298,9 @@ export default function EmployeeDetailScreen() {
         disabled={isSaving}
       >
         {isSaving ? (
-          <ActivityIndicator size="small" color={theme.textInverse} />
+          <ActivityIndicator size="small" color="#ffffff" />
         ) : (
-          <Text style={{ color: theme.textInverse }} className="font-geist-semibold text-base">
+          <Text style={{ color: '#ffffff' }} className="font-geist-semibold text-base">
             {t('common.save')}
           </Text>
         )}
@@ -293,9 +308,10 @@ export default function EmployeeDetailScreen() {
 
       {/* Deactivate / Reactivate Button */}
       <Pressable
-        className={`rounded-xl p-4 items-center active:opacity-80 ${
-          employee.is_active ? 'bg-error/15' : 'bg-success/15'
-        }`}
+        style={{
+          backgroundColor: employee.is_active ? theme.error + '20' : theme.success + '20',
+        }}
+        className="rounded-xl p-4 items-center active:opacity-80"
         onPress={() => setShowToggleModal(true)}
       >
         <Text

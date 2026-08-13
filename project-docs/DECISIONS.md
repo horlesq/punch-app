@@ -145,3 +145,12 @@ anyone who already applied the original.
 **General "adding a new feature" procedure: documented in ARCHITECTURE.md Section 10.**
 A repeatable checklist (migration+RLS → API layer → utils → screen → routing → log decision) so
 future feature work doesn't require re-deriving the right order of operations each time.
+
+---
+
+**`business_settings` readable by unauthenticated (anon) users.**
+The login screen must display business branding (logo, colors, business name) before any user is authenticated. Since Supabase Auth requires a session to satisfy authenticated RLS policies, the ThemeProvider was falling back to default unbranded values on the login screen.
+Decision: grant SELECT on `business_settings` to the `anon` role so branding loads on app start before login. This is safe because `business_settings` contains no sensitive data – only public-facing branding and non-sensitive configuration (break rules, approval mode).
+Write access remains admin-only.
+Similarly, the `branding` Storage bucket is set to public read so the logo URL resolves without authentication.
+

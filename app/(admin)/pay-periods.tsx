@@ -304,9 +304,12 @@ export default function PayPeriodsScreen() {
               </View>
             )}
             {isFutureWeek && (
-              <View className="flex-row items-center bg-purple-500/15 px-2.5 py-0.5 rounded-full mt-1">
-                <MaterialCommunityIcons name="calendar-clock" size={12} color="#8B5CF6" />
-                <Text className="font-geist-medium text-[11px] text-purple-400 ml-1">
+              <View
+                style={{ backgroundColor: theme.accent + '15' }}
+                className="flex-row items-center px-2.5 py-0.5 rounded-full mt-1"
+              >
+                <MaterialCommunityIcons name="calendar-clock" size={12} color={theme.accent} />
+                <Text style={{ color: theme.accent }} className="font-geist-medium text-[11px] ml-1">
                   {t('admin.payPeriods.futureWeek')}
                 </Text>
               </View>
@@ -368,7 +371,7 @@ export default function PayPeriodsScreen() {
                     backgroundColor: row.isPaid
                       ? theme.success + '25'
                       : isFutureWeek
-                      ? '#8B5CF625'
+                      ? theme.accent + '25'
                       : isCurrentWeek
                       ? theme.accent + '25'
                       : theme.surfaceVariant,
@@ -380,7 +383,7 @@ export default function PayPeriodsScreen() {
                       color: row.isPaid
                         ? theme.success
                         : isFutureWeek
-                        ? '#8B5CF6'
+                        ? theme.accent
                         : isCurrentWeek
                         ? theme.accent
                         : theme.textSecondary,

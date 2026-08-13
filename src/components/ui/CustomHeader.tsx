@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -17,6 +17,15 @@ export function CustomHeader({ title }: CustomHeaderProps) {
   const router = useRouter();
   const { profile } = useAuth();
   const { theme } = useTheme();
+  const [logoError, setLogoError] = useState(false);
+
+  // Reset error state when logoUrl changes (e.g. after re-upload)
+  const logoKey = theme.logoUrl ?? '';
+  React.useEffect(() => {
+    setLogoError(false);
+  }, [logoKey]);
+
+  const showLogo = theme.logoUrl && !logoError;
 
   return (
     <View
@@ -33,12 +42,13 @@ export function CustomHeader({ title }: CustomHeaderProps) {
     >
       {/* Left: Logo + Business Name */}
       <View className="flex-row items-center pt-4 flex-1 pr-4">
-        {theme.logoUrl ? (
+        {showLogo ? (
           <Image
             key={theme.logoUrl}
-            source={{ uri: theme.logoUrl }}
+            source={{ uri: theme.logoUrl! }}
             style={{ width: 32, height: 32, borderRadius: 16 }}
             resizeMode="cover"
+            onError={() => setLogoError(true)}
           />
         ) : (
           <View

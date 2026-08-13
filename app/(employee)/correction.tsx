@@ -265,6 +265,7 @@ export default function CorrectionScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
+        style={{ backgroundColor: theme.background }}
         className="flex-1"
         contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
@@ -280,7 +281,7 @@ export default function CorrectionScreen() {
           </Text>
           {Platform.OS === 'web' ? (
             <View
-              style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight }}
+              style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight + '60' }}
               className="rounded-xl p-4 flex-row items-center border"
             >
               <MaterialCommunityIcons name="calendar" size={20} color={theme.textSecondary} />
@@ -297,7 +298,7 @@ export default function CorrectionScreen() {
           ) : (
             <>
               <Pressable
-                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight }}
+                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight + '60' }}
                 className="rounded-xl p-4 flex-row items-center border"
                 onPress={showDatePicker}
               >
@@ -324,7 +325,7 @@ export default function CorrectionScreen() {
           </Text>
           {Platform.OS === 'web' ? (
             <TextInput
-              style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight }}
+              style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight + '60' }}
               className="rounded-xl p-4 font-inter text-base border"
               placeholder="08:30"
               placeholderTextColor={theme.textSecondary}
@@ -335,7 +336,7 @@ export default function CorrectionScreen() {
           ) : (
             <>
               <Pressable
-                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight }}
+                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight + '60' }}
                 className="rounded-xl p-4 flex-row items-center h-[52px] border"
                 onPress={showClockInPicker}
               >
@@ -361,7 +362,7 @@ export default function CorrectionScreen() {
           </Text>
           {Platform.OS === 'web' ? (
             <TextInput
-              style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight }}
+              style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight + '60' }}
               className="rounded-xl p-4 font-inter text-base border"
               placeholder="17:00"
               placeholderTextColor={theme.textSecondary}
@@ -372,7 +373,7 @@ export default function CorrectionScreen() {
           ) : (
             <>
               <Pressable
-                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight }}
+                style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight + '60' }}
                 className="rounded-xl p-4 flex-row items-center h-[52px] border"
                 onPress={showClockOutPicker}
               >
@@ -397,7 +398,7 @@ export default function CorrectionScreen() {
             {t('correction.reason')}
           </Text>
           <TextInput
-            style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight, minHeight: 100 }}
+            style={{ backgroundColor: theme.surfaceContainerLowest, color: theme.textPrimary, borderColor: theme.borderLight + '60', minHeight: 100 }}
             className="rounded-xl p-4 font-inter text-base border"
             placeholder={t('correction.reasonPlaceholder')}
             placeholderTextColor={theme.textSecondary}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -83,6 +83,14 @@ export function BrandingSection({
   setShowResetModal,
 }: BrandingSectionProps) {
   const { t } = useTranslation();
+  const [logoError, setLogoError] = useState(false);
+  const [previewLogoError, setPreviewLogoError] = useState(false);
+
+  // Reset error state when logoUrl changes (e.g. after re-upload)
+  React.useEffect(() => {
+    setLogoError(false);
+    setPreviewLogoError(false);
+  }, [logoUrl]);
 
   // Derived live preview colors
   const isPreviewDark = themeMode === 'dark';
@@ -164,11 +172,12 @@ export function BrandingSection({
           {t('settings.branding.logo')}
         </Text>
         <View className="flex-row items-center mb-5">
-          {logoUrl ? (
+          {logoUrl && !logoError ? (
             <Image
               source={{ uri: logoUrl }}
               style={{ width: 56, height: 56, borderRadius: 28 }}
               className="mr-3"
+              onError={() => setLogoError(true)}
             />
           ) : (
             <View
@@ -331,11 +340,12 @@ export function BrandingSection({
             className="rounded-xl p-3 border"
           >
             <View className="flex-row items-center mb-3">
-              {logoUrl ? (
+              {logoUrl && !previewLogoError ? (
                 <Image
                   source={{ uri: logoUrl }}
                   style={{ width: 28, height: 28, borderRadius: 14 }}
                   className="mr-2"
+                  onError={() => setPreviewLogoError(true)}
                 />
               ) : (
                 <View
@@ -347,7 +357,7 @@ export function BrandingSection({
                   }}
                   className="mr-2 items-center justify-center"
                 >
-                  <Text className="text-white text-xs font-geist-bold">
+                  <Text style={{ color: '#ffffff' }} className="text-xs font-geist-bold">
                     {(businessName || 'P')[0].toUpperCase()}
                   </Text>
                 </View>

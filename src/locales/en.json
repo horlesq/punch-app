@@ -227,6 +227,7 @@
   "settings.branding.errorUploadSize": "Image must be under 2MB.",
   "settings.branding.errorUploadType": "Only JPG and PNG images are allowed.",
   "settings.branding.errorUploading": "Failed to upload logo.",
+  "settings.branding.errorInvalidHex": "Please enter a valid 6-digit hex color code (e.g. #3B82F6).",
   "settings.rules.title": "Business Rules",
   "settings.rules.breakThreshold": "Break Threshold (hours)",
   "settings.rules.breakThresholdUnit": "hours",

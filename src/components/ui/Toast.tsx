@@ -67,12 +67,12 @@ export function Toast({
   const bgColor =
     type === 'success'
       ? isDark
-        ? '#064E3B'
-        : '#ECFDF5'
+        ? theme.success + '30'
+        : theme.success + '15'
       : type === 'error'
       ? isDark
-        ? '#450A0A'
-        : '#FEF2F2'
+        ? theme.error + '30'
+        : theme.error + '15'
       : theme.surfaceContainerLowest;
 
   const toastContent = (

@@ -204,6 +204,11 @@ Baseline policies needed:
 - `business_settings`: all authenticated users can read; only admin can write.
 - `audit_log`: admin-only read; writes happen via backend logic, not direct client inserts.
 
+Exception: `business_settings` and the `branding` storage bucket grant read access to the
+`anon` role – required so the login screen can load branding before a session exists.
+This is intentional. See DECISIONS.md for full reasoning.
+
+
 ## 8. Role-Based Route Guarding
 
 Hiding admin tab links from employees in the UI is not sufficient — a guard must also run at

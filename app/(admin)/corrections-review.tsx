@@ -230,7 +230,8 @@ export default function CorrectionsReviewScreen() {
               {/* Action Buttons */}
               <View className="flex-row gap-3 mt-1">
                 <Pressable
-                  className="flex-1 bg-success/15 rounded-lg py-3 items-center active:opacity-80"
+                  style={{ backgroundColor: theme.success + '20' }}
+                  className="flex-1 rounded-lg py-3 items-center active:opacity-80"
                   onPress={() => handleApprove(correction)}
                   disabled={isProcessing}
                 >
@@ -243,7 +244,8 @@ export default function CorrectionsReviewScreen() {
                   )}
                 </Pressable>
                 <Pressable
-                  className="flex-1 bg-error/15 rounded-lg py-3 items-center active:opacity-80"
+                  style={{ backgroundColor: theme.error + '20' }}
+                  className="flex-1 rounded-lg py-3 items-center active:opacity-80"
                   onPress={() => handleReject(correction)}
                   disabled={isProcessing}
                 >

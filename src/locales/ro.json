@@ -227,6 +227,7 @@
   "settings.branding.errorUploadSize": "Imaginea trebuie să fie sub 2MB.",
   "settings.branding.errorUploadType": "Doar imaginile JPG și PNG sunt permise.",
   "settings.branding.errorUploading": "Încărcarea logo-ului a eșuat.",
+  "settings.branding.errorInvalidHex": "Introduceți un cod hex valid de 6 cifre (ex. #3B82F6).",
   "settings.rules.title": "Reguli de afacere",
   "settings.rules.breakThreshold": "Prag pauză (ore)",
   "settings.rules.breakThresholdUnit": "ore",

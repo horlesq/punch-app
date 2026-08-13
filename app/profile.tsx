@@ -51,7 +51,7 @@ export default function ProfileScreen() {
           shadowRadius: 4,
           elevation: 2,
         }}
-        className="w-full rounded-xl p-4 mb-6"
+        className="w-full rounded-2xl p-4 mb-6"
       >
         <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-base mb-3">
           {t('profile.language')}
@@ -61,7 +61,7 @@ export default function ProfileScreen() {
             style={{
               backgroundColor: currentLang === 'en' ? theme.primary : theme.surfaceVariant,
             }}
-            className="flex-1 py-3 px-4 rounded-lg items-center"
+            className="flex-1 py-3 px-4 rounded-xl items-center"
             onPress={() => handleLanguageChange('en')}
           >
             <Text
@@ -78,7 +78,7 @@ export default function ProfileScreen() {
             style={{
               backgroundColor: currentLang === 'ro' ? theme.primary : theme.surfaceVariant,
             }}
-            className="flex-1 py-3 px-4 rounded-lg items-center"
+            className="flex-1 py-3 px-4 rounded-xl items-center"
             onPress={() => handleLanguageChange('ro')}
           >
             <Text

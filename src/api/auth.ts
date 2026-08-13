@@ -18,12 +18,18 @@ export async function signInWithEmail(
 
 /**
  * Sign out the current user.
+ * Falls back to local scope sign out if the server session is stale/invalid (e.g., after DB reset).
  */
 export async function signOut(): Promise<{ error: Error | null }> {
-  const { error } = await supabase.auth.signOut();
+  try {
+    const { error } = await supabase.auth.signOut();
 
-  if (error) {
-    return { error: new Error(error.message) };
+    if (error) {
+      // Fall back to local scope sign out if global server logout fails
+      await supabase.auth.signOut({ scope: 'local' });
+    }
+  } catch {
+    await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
   }
 
   return { error: null };

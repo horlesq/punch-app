@@ -99,25 +99,33 @@ export default function AddEmployeeScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-background"
+      style={{ backgroundColor: theme.background }}
+      className="flex-1"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
+        style={{ backgroundColor: theme.background }}
         className="flex-1"
         contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
       >
-        <Text className="text-on-surface font-geist-semibold text-2xl mb-6">
+        <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-2xl mb-6">
           {t('admin.addEmployee.title')}
         </Text>
 
         {/* Full Name */}
         <View className="mb-6">
-          <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+          <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
             {t('admin.addEmployee.fullName')}
           </Text>
           <TextInput
-            className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
+            style={{
+              backgroundColor: theme.surfaceContainerLowest,
+              color: theme.textPrimary,
+              borderColor: theme.borderLight + '60',
+              borderWidth: 1,
+            }}
+            className="rounded-xl p-4 font-inter text-base"
             placeholder={t('admin.addEmployee.fullNamePlaceholder')}
             placeholderTextColor={theme.textSecondary}
             value={fullName}
@@ -128,11 +136,17 @@ export default function AddEmployeeScreen() {
 
         {/* Email */}
         <View className="mb-6">
-          <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+          <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
             {t('admin.addEmployee.email')}
           </Text>
           <TextInput
-            className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
+            style={{
+              backgroundColor: theme.surfaceContainerLowest,
+              color: theme.textPrimary,
+              borderColor: theme.borderLight + '60',
+              borderWidth: 1,
+            }}
+            className="rounded-xl p-4 font-inter text-base"
             placeholder={t('admin.addEmployee.emailPlaceholder')}
             placeholderTextColor={theme.textSecondary}
             value={email}
@@ -145,11 +159,17 @@ export default function AddEmployeeScreen() {
 
         {/* Hourly Rate */}
         <View className="mb-8">
-          <Text className="text-on-surface-variant font-geist-medium text-sm mb-1.5">
+          <Text style={{ color: theme.textSecondary }} className="font-geist-medium text-sm mb-1.5">
             {t('admin.addEmployee.hourlyRate')}
           </Text>
           <TextInput
-            className="bg-surface-container-lowest rounded-xl p-4 text-on-surface font-inter text-base"
+            style={{
+              backgroundColor: theme.surfaceContainerLowest,
+              color: theme.textPrimary,
+              borderColor: theme.borderLight + '60',
+              borderWidth: 1,
+            }}
+            className="rounded-xl p-4 font-inter text-base"
             placeholder={t('admin.addEmployee.hourlyRatePlaceholder')}
             placeholderTextColor={theme.textSecondary}
             value={hourlyRate}
@@ -160,7 +180,7 @@ export default function AddEmployeeScreen() {
 
         {/* Error message */}
         {errorMessage && (
-          <Text className="text-error text-center text-sm mb-4">{errorMessage}</Text>
+          <Text style={{ color: theme.error }} className="text-center text-sm mb-4">{errorMessage}</Text>
         )}
 
         {/* Submit button */}
@@ -171,9 +191,9 @@ export default function AddEmployeeScreen() {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <ActivityIndicator size="small" color={theme.textInverse} />
+            <ActivityIndicator size="small" color="#ffffff" />
           ) : (
-            <Text style={{ color: theme.textInverse }} className="font-geist-semibold text-base">
+            <Text style={{ color: '#ffffff' }} className="font-geist-semibold text-base">
               {t('admin.addEmployee.submit')}
             </Text>
           )}

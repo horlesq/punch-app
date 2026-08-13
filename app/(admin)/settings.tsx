@@ -28,6 +28,7 @@ import { Toast } from '@/src/components/ui/Toast';
 import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
 import { BrandingSection } from '@/src/components/settings/BrandingSection';
 import { RulesSection } from '@/src/components/settings/RulesSection';
+import { isValidHex } from '@/src/components/settings/ReanimatedColorPickerWrapper';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -198,6 +199,18 @@ export default function SettingsScreen() {
     setIsSavingBranding(true);
     setBrandingSavedMsg(null);
     setBrandingErrorMsg(null);
+
+    // Validate hex values before saving
+    if (!isValidHex(primaryColor)) {
+      setBrandingErrorMsg(t('settings.branding.errorInvalidHex'));
+      setIsSavingBranding(false);
+      return;
+    }
+    if (accentColor && !isValidHex(accentColor)) {
+      setBrandingErrorMsg(t('settings.branding.errorInvalidHex'));
+      setIsSavingBranding(false);
+      return;
+    }
 
     const { error } = await updateBranding(
       businessName.trim(),

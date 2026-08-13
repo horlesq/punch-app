@@ -272,12 +272,12 @@ export default function PayPeriodDetailScreen() {
 
   if (isFutureWeek) {
     return (
-      <View className="flex-1 justify-center items-center bg-background px-6">
+      <View style={{ backgroundColor: theme.background }} className="flex-1 justify-center items-center px-6">
         <MaterialCommunityIcons name="calendar-clock" size={48} color={theme.textSecondary} />
-        <Text className="font-geist-semibold text-on-surface text-lg mt-4 text-center">
+        <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-lg mt-4 text-center">
           {t('admin.payPeriodDetail.futureWeekTitle')}
         </Text>
-        <Text className="font-inter text-on-surface-variant text-sm mt-2 text-center">
+        <Text style={{ color: theme.textSecondary }} className="font-inter text-sm mt-2 text-center">
           {t('admin.payPeriodDetail.futureWeekMessage')}
         </Text>
       </View>
@@ -286,8 +286,8 @@ export default function PayPeriodDetailScreen() {
 
   if (!employee) {
     return (
-      <View className="flex-1 justify-center items-center bg-background px-6">
-        <Text className="text-error text-center">{errorMessage ?? t('admin.payPeriodDetail.errorLoading')}</Text>
+      <View style={{ backgroundColor: theme.background }} className="flex-1 justify-center items-center px-6">
+        <Text style={{ color: theme.error }} className="text-center">{errorMessage ?? t('admin.payPeriodDetail.errorLoading')}</Text>
       </View>
     );
   }
@@ -296,21 +296,22 @@ export default function PayPeriodDetailScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-background"
+      style={{ backgroundColor: theme.background }}
+      className="flex-1"
       contentContainerStyle={{ paddingTop: 16, paddingBottom: 32 }}
     >
       {/* Header: Employee name + week range */}
       <View className="mx-4 mb-4 flex-row items-center justify-between">
         <View className="flex-1">
-          <Text className="font-geist-bold text-on-surface text-xl">
+          <Text style={{ color: theme.textPrimary }} className="font-geist-bold text-xl">
             {employee.full_name}
           </Text>
-          <Text className="font-inter text-sm text-on-surface-variant mt-1">
+          <Text style={{ color: theme.textSecondary }} className="font-inter text-sm mt-1">
             {formatShortDate(weekMonday)} – {formatShortDate(weekSunday)}
           </Text>
         </View>
         {isCurrentWeek && (
-          <View className="flex-row items-center bg-accent/15 px-3 py-1 rounded-full">
+          <View style={{ backgroundColor: theme.accent + '20' }} className="flex-row items-center px-3 py-1 rounded-full">
             <MaterialCommunityIcons name="clock-outline" size={14} color={theme.accent} />
             <Text style={{ color: theme.accent }} className="font-geist-medium text-xs ml-1">
               {t('admin.payPeriods.currentWeek')}
@@ -318,9 +319,12 @@ export default function PayPeriodDetailScreen() {
           </View>
         )}
         {isFutureWeek && (
-          <View className="flex-row items-center bg-purple-500/15 px-3 py-1 rounded-full">
-            <MaterialCommunityIcons name="calendar-clock" size={14} color="#8B5CF6" />
-            <Text className="font-geist-medium text-xs text-purple-600 ml-1">
+          <View
+            style={{ backgroundColor: theme.accent + '15' }}
+            className="flex-row items-center px-3 py-1 rounded-full"
+          >
+            <MaterialCommunityIcons name="calendar-clock" size={14} color={theme.accent} />
+            <Text style={{ color: theme.accent }} className="font-geist-medium text-xs ml-1">
               {t('admin.payPeriods.futureWeek')}
             </Text>
           </View>
@@ -329,7 +333,7 @@ export default function PayPeriodDetailScreen() {
 
       {/* Locked Banner */}
       {isLocked && payPeriod?.paid_at && (
-        <View className="mx-4 mb-4 p-4 bg-success/15 rounded-2xl flex-row items-center">
+        <View style={{ backgroundColor: theme.success + '20' }} className="mx-4 mb-4 p-4 rounded-2xl flex-row items-center">
           <MaterialCommunityIcons name="lock" size={20} color={theme.success} />
           <Text style={{ color: theme.success }} className="font-geist-semibold text-sm ml-2.5 flex-1">
             {t('admin.payPeriodDetail.lockedBanner', {
@@ -344,40 +348,41 @@ export default function PayPeriodDetailScreen() {
         <Text style={{ color: theme.success }} className="text-center text-sm mb-4 mx-4">{successMessage}</Text>
       )}
       {errorMessage && (
-        <Text className="text-error text-center text-sm mb-4 mx-4">{errorMessage}</Text>
+        <Text style={{ color: theme.error }} className="text-center text-sm mb-4 mx-4">{errorMessage}</Text>
       )}
 
       {/* Shifts Table */}
       {shifts.length === 0 ? (
         <View className="justify-center items-center pt-12">
           <MaterialCommunityIcons name="calendar-blank-outline" size={48} color={theme.textSecondary} />
-          <Text className="text-on-surface-variant text-base mt-4">
+          <Text style={{ color: theme.textSecondary }} className="text-base mt-4">
             {t('admin.payPeriodDetail.noShifts')}
           </Text>
         </View>
       ) : (
         <View
-          className="mx-4 bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/20"
           style={{
+            backgroundColor: theme.surfaceContainerLowest,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.05,
             shadowRadius: 10,
             elevation: 3,
           }}
+          className="mx-4 rounded-2xl overflow-hidden"
         >
           {/* Table Header */}
-          <View className="flex-row items-center bg-surface-container-high border-b border-outline-variant/25 px-3 py-3">
-            <Text className="font-geist-semibold text-[10px] sm:text-[11px] text-on-surface-variant tracking-wider uppercase flex-[2.3] ml-2">
+          <View style={{ backgroundColor: theme.surfaceVariant }} className="flex-row items-center px-3 py-3">
+            <Text style={{ color: theme.textSecondary }} className="font-geist-semibold text-[10px] sm:text-[11px] tracking-wider uppercase flex-[2.3] ml-2">
               {t('admin.payPeriodDetail.date')}
             </Text>
-            <Text className="font-geist-semibold text-[10px] sm:text-[11px] text-on-surface-variant tracking-wider uppercase flex-[2.3]">
+            <Text style={{ color: theme.textSecondary }} className="font-geist-semibold text-[10px] sm:text-[11px] tracking-wider uppercase flex-[2.3]">
               {t('admin.payPeriodDetail.clockIn')} / {t('admin.payPeriodDetail.clockOut')}
             </Text>
-            <Text className="font-geist-semibold text-[10px] sm:text-[11px] text-on-surface-variant tracking-wider uppercase flex-[1.2] text-center">
+            <Text style={{ color: theme.textSecondary }} className="font-geist-semibold text-[10px] sm:text-[11px] tracking-wider uppercase flex-[1.2] text-center">
               {t('admin.payPeriodDetail.netHours')}
             </Text>
-            <Text className="font-geist-semibold text-[10px] sm:text-[11px] text-on-surface-variant tracking-wider uppercase flex-[1.4] text-right mr-2">
+            <Text style={{ color: theme.textSecondary }} className="font-geist-semibold text-[10px] sm:text-[11px] tracking-wider uppercase flex-[1.4] text-right mr-2">
               {t('admin.payPeriodDetail.shiftPay')}
             </Text>
           </View>
@@ -386,24 +391,26 @@ export default function PayPeriodDetailScreen() {
           {shifts.map((shift, index) => (
             <View
               key={shift.punch.id}
-              className={`flex-row items-center px-3 py-3.5 ${
-                index < shifts.length - 1 ? 'border-b border-outline-variant/10' : ''
-              }`}
+              style={{
+                borderBottomColor: index < shifts.length - 1 ? theme.borderLight + '40' : 'transparent',
+                borderBottomWidth: index < shifts.length - 1 ? 1 : 0,
+              }}
+              className="flex-row items-center px-3 py-3.5"
             >
               {/* Date */}
               <View className="flex-[2.3]">
-                <Text className="font-geist-semibold text-xs text-on-surface" numberOfLines={1}>
+                <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-xs" numberOfLines={1}>
                   {shift.date}
                 </Text>
               </View>
 
               {/* Time Interval & Break Note */}
               <View className="flex-[2.3]">
-                <Text className="font-inter text-xs text-on-surface-variant" numberOfLines={1}>
+                <Text style={{ color: theme.textSecondary }} className="font-inter text-xs" numberOfLines={1}>
                   {shift.clockIn} – {shift.clockOut ?? t('admin.payPeriodDetail.inProgress')}
                 </Text>
                 {shift.breakDeducted && (
-                  <Text className="font-inter text-[10px] text-on-surface-variant/70 mt-0.5" numberOfLines={1}>
+                  <Text style={{ color: theme.textSecondary }} className="font-inter text-[10px] opacity-70 mt-0.5" numberOfLines={1}>
                     • {t('admin.payPeriodDetail.breakDeducted')}
                   </Text>
                 )}
@@ -411,14 +418,14 @@ export default function PayPeriodDetailScreen() {
 
               {/* Net Hours */}
               <View className="flex-[1.2] items-center justify-center">
-                <Text className="font-geist-semibold text-xs text-on-surface">
+                <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-xs">
                   {shift.netHours.toFixed(1)}h
                 </Text>
               </View>
 
               {/* Shift Pay */}
               <View className="flex-[1.4] items-end justify-center">
-                <Text className="font-geist-bold text-xs sm:text-sm text-on-surface">
+                <Text style={{ color: theme.textPrimary }} className="font-geist-bold text-xs sm:text-sm">
                   ${shift.shiftPay.toFixed(2)}
                 </Text>
               </View>
@@ -440,18 +447,18 @@ export default function PayPeriodDetailScreen() {
         }}
       >
         <View>
-          <Text style={{ color: theme.textInverse }} className="font-geist-medium text-xs opacity-80 uppercase tracking-wider">
+          <Text style={{ color: '#ffffff' }} className="font-geist-medium text-xs opacity-80 uppercase tracking-wider">
             {t('admin.payPeriodDetail.totalHours')}
           </Text>
-          <Text style={{ color: theme.textInverse }} className="font-geist-bold text-xl sm:text-2xl mt-0.5">
+          <Text style={{ color: '#ffffff' }} className="font-geist-bold text-xl sm:text-2xl mt-0.5">
             {totalHours.toFixed(1)}h
           </Text>
         </View>
         <View className="items-end">
-          <Text style={{ color: theme.textInverse }} className="font-geist-medium text-xs opacity-80 uppercase tracking-wider">
+          <Text style={{ color: '#ffffff' }} className="font-geist-medium text-xs opacity-80 uppercase tracking-wider">
             {t('admin.payPeriodDetail.totalPay')}
           </Text>
-          <Text style={{ color: theme.textInverse }} className="font-geist-bold text-xl sm:text-2xl mt-0.5">
+          <Text style={{ color: '#ffffff' }} className="font-geist-bold text-xl sm:text-2xl mt-0.5">
             ${totalPay.toFixed(2)}
           </Text>
         </View>
@@ -460,7 +467,8 @@ export default function PayPeriodDetailScreen() {
       {/* Unlock Button — only for locked weeks */}
       {isLocked && (
         <Pressable
-          className="mx-4 mt-4 bg-error/10 border border-error/20 rounded-2xl p-4 items-center flex-row justify-center active:opacity-80"
+          style={{ backgroundColor: theme.error + '20' }}
+          className="mx-4 mt-4 rounded-2xl p-4 items-center flex-row justify-center active:opacity-80"
           onPress={() => setShowUnlockModal(true)}
         >
           <MaterialCommunityIcons name="lock-open-outline" size={18} color={theme.error} />

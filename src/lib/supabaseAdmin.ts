@@ -14,6 +14,7 @@ const supabaseServiceRoleKey = process.env.EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY
  */
 export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceRoleKey, {
   auth: {
+    storageKey: 'sb-admin-auth-token',
     autoRefreshToken: false,
     persistSession: false,
   },

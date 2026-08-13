@@ -150,7 +150,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           borderLight: isDark ? DARK_NEUTRAL_BORDER_LIGHT : LIGHT_NEUTRAL_BORDER_LIGHT,
 
           businessName: data.business_name || DEFAULT_BUSINESS_NAME,
-          logoUrl: data.logo_url || null,
+          logoUrl: data.logo_url
+            ? `${data.logo_url}${data.logo_url.includes('?') ? '&' : '?'}t=${Date.now()}`
+            : null,
         });
       }
     } catch {
