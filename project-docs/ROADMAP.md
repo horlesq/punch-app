@@ -52,6 +52,10 @@ integration issues (Supabase config, Expo setup, auth) early, while they're chea
 - [x] Default/fallback theme for fresh installs (before any branding set)
 - [x] Admin: Settings — rules section (break threshold/duration, approval mode toggle)
 
+## Phase 5.1 — Security, Profiles & UI Polish
+- [x] User Profile screens (Employee & Admin) with Avatar upload (Supabase Storage)
+- [x] Account settings (Change Email, Password, Language Modals)
+
 ## Phase 6 — Polish & Open-Source Readiness
 - [ ] Audit log viewer (admin-facing, simple list)
 - [ ] Empty states, loading states, error handling pass across all screens
