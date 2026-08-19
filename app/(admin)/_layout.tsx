@@ -93,6 +93,10 @@ export default function AdminLayout() {
         name="pay-period-detail"
         options={{ href: null }}
       />
+      <Tabs.Screen
+        name="profile"
+        options={{ href: null }}
+      />
     </Tabs>
   );
 }

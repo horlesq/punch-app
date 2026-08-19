@@ -31,14 +31,13 @@ export function CustomHeader({ title }: CustomHeaderProps) {
     <View
       style={{
         paddingTop: insets.top,
-        backgroundColor: theme.surfaceContainerLowest,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.03,
         shadowRadius: 3,
         elevation: 1,
       }}
-      className="flex-row items-center justify-between w-full px-6 pb-3"
+      className="flex-row items-center justify-between w-full px-6 pb-4"
     >
       {/* Left: Logo + Business Name */}
       <View className="flex-row items-center pt-4 flex-1 pr-4">
@@ -60,7 +59,7 @@ export function CustomHeader({ title }: CustomHeaderProps) {
         )}
         <Text
           style={{ color: theme.textPrimary }}
-          className="font-geist-bold text-base ml-3"
+          className="font-geist-bold text-2xl ml-3"
           numberOfLines={1}
         >
           {theme.businessName}
@@ -72,7 +71,7 @@ export function CustomHeader({ title }: CustomHeaderProps) {
         onPress={() => router.push('/profile')}
         className="active:opacity-60 pt-4"
       >
-        <UserAvatar name={profile?.full_name} size={32} />
+        <UserAvatar avatarUrl={profile?.avatar_url} name={profile?.full_name} role={profile?.role} size={32} />
       </Pressable>
     </View>
   );

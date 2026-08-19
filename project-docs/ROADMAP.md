@@ -47,10 +47,10 @@ integration issues (Supabase config, Expo setup, auth) early, while they're chea
 - [x] Admin: per-employee weekly breakdown drill-down view
 
 ## Phase 5 — Branding / White-label
-- [ ] Admin: Settings — branding section (logo upload to Supabase Storage, color pickers)
-- [ ] `ThemeProvider`: reads `business_settings` on load, applies colors app-wide
-- [ ] Default/fallback theme for fresh installs (before any branding set)
-- [ ] Admin: Settings — rules section (break threshold/duration, approval mode toggle)
+- [x] Admin: Settings — branding section (logo upload to Supabase Storage, color pickers)
+- [x] `ThemeProvider`: reads `business_settings` on load, applies colors app-wide
+- [x] Default/fallback theme for fresh installs (before any branding set)
+- [x] Admin: Settings — rules section (break threshold/duration, approval mode toggle)
 
 ## Phase 6 — Polish & Open-Source Readiness
 - [ ] Audit log viewer (admin-facing, simple list)

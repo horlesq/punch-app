@@ -116,7 +116,7 @@ export default function EmployeesScreen() {
             >
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center flex-1">
-                  <UserAvatar name={employee.full_name} size={44} />
+                  <UserAvatar avatarUrl={employee.avatar_url} name={employee.full_name} role={employee.role} size={44} />
                   <View className="ml-3 flex-1">
                     <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-[15px]">
                       {employee.full_name}

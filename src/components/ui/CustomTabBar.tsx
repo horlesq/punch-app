@@ -13,8 +13,6 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
       style={{
         flexDirection: 'row',
         backgroundColor: theme.surfaceContainerLowest,
-        borderTopWidth: 1,
-        borderColor: theme.borderLight,
         paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
         paddingTop: 10,
         shadowColor: '#000',

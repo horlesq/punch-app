@@ -7,6 +7,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/src/theme/ThemeProvider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface ToastProps {
   visible: boolean;
@@ -28,6 +29,7 @@ export function Toast({
   durationMs = 4000,
 }: ToastProps) {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (visible && onDismiss && durationMs > 0) {
@@ -63,17 +65,17 @@ export function Toast({
       ? theme.error
       : theme.textPrimary;
 
-  // Solid, non-transparent background matching color palette
-  const bgColor =
+  // The tint overlay color (like the previous version, slightly stronger)
+  const tintColor =
     type === 'success'
       ? isDark
-        ? theme.success + '30'
-        : theme.success + '15'
+        ? theme.success + '35'
+        : theme.success + '20'
       : type === 'error'
       ? isDark
-        ? theme.error + '30'
-        : theme.error + '15'
-      : theme.surfaceContainerLowest;
+        ? theme.error + '35'
+        : theme.error + '20'
+      : theme.primary + (isDark ? '35' : '15');
 
   const toastContent = (
     <Animated.View
@@ -82,7 +84,7 @@ export function Toast({
       layout={Layout.springify()}
       style={{
         position: Platform.OS === 'web' ? ('fixed' as any) : 'absolute',
-        top: 20,
+        top: Math.max(insets.top, 20) + 10,
         left: 0,
         right: 0,
         alignItems: 'center',
@@ -93,18 +95,34 @@ export function Toast({
       }}
       className="items-center px-4"
     >
+      {/* 
+        Solid Base View: Prevents any content from bleeding through.
+        We apply the shadow to this base view.
+      */}
       <View
         style={{
-          backgroundColor: bgColor,
+          backgroundColor: theme.surfaceContainerLowest, // 100% Solid Opaque
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.18,
           shadowRadius: 10,
           elevation: 8,
           pointerEvents: 'auto' as any,
+          borderRadius: 16,
         }}
-        className="flex-row items-center rounded-2xl px-4 py-3.5 max-w-md w-full"
+        className="max-w-md w-full"
       >
+        {/* 
+          Tint Overlay View: Applies the pastel/tinted color the user liked
+          over the solid white/black base.
+        */}
+        <View
+          style={{
+            backgroundColor: tintColor,
+            borderRadius: 16,
+          }}
+          className="flex-row items-center px-4 py-3.5 w-full"
+        >
         <MaterialCommunityIcons
           name={iconName}
           size={22}
@@ -132,6 +150,7 @@ export function Toast({
             />
           </Pressable>
         )}
+        </View>
       </View>
     </Animated.View>
   );

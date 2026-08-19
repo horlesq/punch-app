@@ -34,6 +34,7 @@ const AuthContext = createContext<SessionState>({
   isProfileLoading: true,
   session: null,
   profile: null,
+  refreshProfile: async () => {},
 });
 
 export function useAuth(): SessionState {

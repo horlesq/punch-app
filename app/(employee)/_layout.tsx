@@ -70,6 +70,10 @@ export default function EmployeeLayout() {
         name="correction"
         options={{ href: null }}
       />
+      <Tabs.Screen
+        name="profile"
+        options={{ href: null }}
+      />
     </Tabs>
   );
 }

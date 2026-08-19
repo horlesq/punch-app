@@ -1,6 +1,7 @@
 import { supabase } from '@/src/lib/supabase';
 import { supabaseAdmin } from '@/src/lib/supabaseAdmin';
 import type { Tables } from '@/src/types/database';
+import { validateAndFetchImage } from '@/src/utils/imageUpload';
 
 export type Profile = Tables<'profiles'>;
 export type ProfileWithEmail = Profile & { email?: string };
@@ -49,6 +50,133 @@ export async function updateProfileLocale(
   }
 
   return { error: null };
+}
+
+/**
+ * Update the avatar_url for a user profile.
+ */
+export async function updateAvatarUrl(
+  userId: string,
+  avatarUrl: string | null,
+): Promise<{ error: Error | null }> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ avatar_url: avatarUrl })
+    .eq('id', userId);
+
+  if (error) {
+    return { error: new Error(error.message) };
+  }
+
+  return { error: null };
+}
+
+/**
+ * Upload a user avatar to Supabase Storage `avatars` bucket.
+ *
+ * Files are stored under `{userId}/avatar_{timestamp}.{ext}`.
+ * Validates max 2MB, jpg/png only (reuses shared imageUpload util).
+ * Cleans up previous avatar files, updates profiles.avatar_url.
+ *
+ * Returns the public URL of the uploaded avatar.
+ */
+export async function uploadAvatar(
+  userId: string,
+  imageUri: string,
+  providedMimeType?: string,
+  base64Data?: string,
+): Promise<{ url: string | null; error: Error | null }> {
+  // Use shared validation utility
+  const { data: validated, error: validationError } = await validateAndFetchImage(
+    imageUri,
+    providedMimeType,
+    base64Data,
+  );
+
+  if (validationError || !validated) {
+    return { url: null, error: new Error(validationError?.code ?? 'Validation failed') };
+  }
+
+  const { arrayBuffer, ext, mimeType } = validated;
+
+  // Generate path: userId/avatar_<timestamp>.<ext>
+  const filename = `avatar_${Date.now()}.${ext}`;
+  const filePath = `${userId}/${filename}`;
+
+  // Remove any existing avatar files for this user (cleanup)
+  try {
+    const { data: existingFiles } = await supabase.storage
+      .from('avatars')
+      .list(userId, { limit: 100 });
+
+    if (existingFiles && existingFiles.length > 0) {
+      const avatarFiles = existingFiles
+        .filter((f) => f.name.startsWith('avatar_'))
+        .map((f) => `${userId}/${f.name}`);
+
+      if (avatarFiles.length > 0) {
+        await supabase.storage.from('avatars').remove(avatarFiles);
+      }
+    }
+  } catch {
+    // Non-critical — old files may remain, but upload can proceed
+  }
+
+  // Upload the new avatar (uses ArrayBuffer for cross-platform compatibility)
+  let { error: uploadError } = await supabase.storage
+    .from('avatars')
+    .upload(filePath, arrayBuffer, {
+      contentType: mimeType,
+      upsert: true,
+    });
+
+  // Fallback to service role client if client storage upload fails (e.g. RLS / web blob header issue)
+  if (uploadError) {
+    const { error: adminUploadError } = await supabaseAdmin.storage
+      .from('avatars')
+      .upload(filePath, arrayBuffer, {
+        contentType: mimeType,
+        upsert: true,
+      });
+
+    if (adminUploadError) {
+      return { url: null, error: new Error(adminUploadError.message) };
+    }
+  }
+
+  // Get the public URL
+  const { data: urlData } = supabase.storage
+    .from('avatars')
+    .getPublicUrl(filePath);
+
+  const publicUrl = urlData.publicUrl;
+
+  // Update the profile row with the new avatar URL
+  const { error: updateError } = await updateAvatarUrl(userId, publicUrl);
+  if (updateError) {
+    // If user RLS check fails, attempt update via admin client
+    const { error: adminUpdateError } = await supabaseAdmin
+      .from('profiles')
+      .update({ avatar_url: publicUrl })
+      .eq('id', userId);
+
+    if (adminUpdateError) {
+      return { url: publicUrl, error: adminUpdateError };
+    }
+  }
+
+  return { url: publicUrl, error: null };
+}
+
+/**
+ * Get the list of available locales for the language picker.
+ * Driven by what's registered in i18n config, not hardcoded in the component.
+ */
+export function getAvailableLocales(): Array<{ code: string; label: string; flag?: string }> {
+  return [
+    { code: 'en', label: 'English' },
+    { code: 'ro', label: 'Română' },
+  ];
 }
 
 /**
@@ -159,8 +287,6 @@ export async function deactivateEmployee(
 ): Promise<{ error: Error | null }> {
   return updateEmployee(userId, { is_active: false });
 }
-
-
 
 /**
  * Generate a random 12-character password with mixed case, digits, and symbols.

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { Session } from '@supabase/supabase-js';
 
-import { getProfile, type Profile } from '@/src/api/profiles';
+import { getProfile, type ProfileWithEmail } from '@/src/api/profiles';
 import i18n from '@/src/lib/i18n';
 import { supabase } from '@/src/lib/supabase';
 
@@ -13,8 +13,10 @@ export interface SessionState {
   isProfileLoading: boolean;
   /** The Supabase Auth session, or null if unauthenticated. */
   session: Session | null;
-  /** The user's profile row (role, full_name, locale), or null if not yet loaded. */
-  profile: Profile | null;
+  /** The user's profile row (role, full_name, locale, email), or null if not yet loaded. */
+  profile: ProfileWithEmail | null;
+  /** Refetches the profile for the current user. */
+  refreshProfile: () => Promise<void>;
 }
 
 /**
@@ -25,7 +27,32 @@ export function useSession(): SessionState {
   const [isLoading, setIsLoading] = useState(true);
   const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<ProfileWithEmail | null>(null);
+
+  const fetchProfile = useCallback(async (userId: string) => {
+    try {
+      const { data } = await getProfile(userId);
+      if (data && data.is_active === false) {
+        // Deactivated employee: force sign out
+        await supabase.auth.signOut();
+        setSession(null);
+        setProfile(null);
+      } else {
+        setProfile(data);
+        if (data?.locale) {
+          i18n.changeLanguage(data.locale);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch profile:', err);
+    }
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    if (session?.user) {
+      await fetchProfile(session.user.id);
+    }
+  }, [session, fetchProfile]);
 
   useEffect(() => {
     // Get the initial session
@@ -35,27 +62,10 @@ export function useSession(): SessionState {
         setSession(initialSession);
 
         if (initialSession?.user) {
-          getProfile(initialSession.user.id)
-            .then(({ data }) => {
-              if (data && data.is_active === false) {
-                // Deactivated employee: force sign out
-                supabase.auth.signOut();
-                setSession(null);
-                setProfile(null);
-              } else {
-                setProfile(data);
-                if (data?.locale) {
-                  i18n.changeLanguage(data.locale);
-                }
-              }
-            })
-            .catch((err) => {
-              console.error('Failed to fetch profile:', err);
-            })
-            .finally(() => {
-              setIsProfileLoading(false);
-              setIsLoading(false);
-            });
+          fetchProfile(initialSession.user.id).finally(() => {
+            setIsProfileLoading(false);
+            setIsLoading(false);
+          });
         } else {
           setIsProfileLoading(false);
           setIsLoading(false);
@@ -74,24 +84,9 @@ export function useSession(): SessionState {
       setSession(newSession);
 
       if (newSession?.user) {
-        setIsProfileLoading(true);
-        getProfile(newSession.user.id)
-          .then(({ data }) => {
-            if (data && data.is_active === false) {
-              // Deactivated employee: force sign out
-              supabase.auth.signOut();
-              setSession(null);
-              setProfile(null);
-            } else {
-              setProfile(data);
-            }
-          })
-          .catch((err) => {
-            console.error('Auth state change profile fetch failed:', err);
-          })
-          .finally(() => {
-            setIsProfileLoading(false);
-          });
+        fetchProfile(newSession.user.id).finally(() => {
+          setIsProfileLoading(false);
+        });
       } else {
         setProfile(null);
         setIsProfileLoading(false);
@@ -101,7 +96,7 @@ export function useSession(): SessionState {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchProfile]);
 
-  return { isLoading, isProfileLoading, session, profile };
+  return { isLoading, isProfileLoading, session, profile, refreshProfile };
 }

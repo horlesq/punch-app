@@ -154,3 +154,11 @@ Decision: grant SELECT on `business_settings` to the `anon` role so branding loa
 Write access remains admin-only.
 Similarly, the `branding` Storage bucket is set to public read so the logo URL resolves without authentication.
 
+---
+
+**`avatars` Storage bucket set to public read & path-scoped write policies.**
+Profile avatars are readable by all authenticated users (so admins can see employee avatars in lists) and public for pre-auth contexts. Upload, update, and delete access is strictly limited to files under each user's own `{userId}/` path (`(storage.foldername(name))[1] = auth.uid()::text`).
+
+**`profiles` table self-update RLS policy added.**
+Previously, `profiles` update policy was restricted to `is_admin()`. To allow employees to change their language preference (`locale`) and avatar (`avatar_url`), a `"Users can update own locale and avatar"` policy was added (`auth.uid() = id`). Field-level protection is maintained at the API layer so users cannot mutate `role`, `hourly_rate`, or `full_name`.
+

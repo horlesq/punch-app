@@ -6,16 +6,24 @@ import { useTheme } from '@/src/theme/ThemeProvider';
 type UserAvatarProps = {
   avatarUrl?: string | null;
   name?: string | null;
+  role?: 'admin' | 'employee' | string | null;
   size?: number;
 };
 
 /**
- * Renders a user's avatar image, or a generic placeholder avatar with
- * initials/icon if no profile picture is set.
+ * Renders a user's avatar image, or a default placeholder avatar.
+ * Admin users receive a prominent suit-and-tie admin icon (account-tie) when no picture is uploaded.
  */
-export function UserAvatar({ avatarUrl, name, size = 40 }: UserAvatarProps) {
+export function UserAvatar({
+  avatarUrl,
+  name,
+  role,
+  size = 40,
+}: UserAvatarProps) {
   const { theme } = useTheme();
+  const isAdmin = role === 'admin';
 
+  // Render uploaded image if avatarUrl is provided
   if (avatarUrl) {
     return (
       <Image
@@ -26,7 +34,23 @@ export function UserAvatar({ avatarUrl, name, size = 40 }: UserAvatarProps) {
     );
   }
 
-  // Get initials if name is provided (e.g. "John Doe" -> "JD")
+  // Admin users without an uploaded photo display the prominent suit-and-tie admin icon
+  if (isAdmin) {
+    return (
+      <View
+        style={{ width: size, height: size, borderRadius: size / 2 }}
+        className="bg-surface-container-high items-center justify-center border border-outline-variant/40 overflow-hidden"
+      >
+        <MaterialCommunityIcons
+          name="account-tie"
+          size={Math.round(size * 1.15)}
+          color={theme.primary}
+        />
+      </View>
+    );
+  }
+
+  // Employee initials fallback
   const initials = name
     ? name
         .trim()
@@ -43,7 +67,10 @@ export function UserAvatar({ avatarUrl, name, size = 40 }: UserAvatarProps) {
         style={{ width: size, height: size, borderRadius: size / 2 }}
         className="bg-surface-container-high items-center justify-center border border-outline-variant/40"
       >
-        <Text style={{ fontSize: size * 0.38, color: theme.primary }} className="font-geist-semibold">
+        <Text
+          style={{ fontSize: size * 0.44, color: theme.primary }}
+          className="font-geist-semibold"
+        >
           {initials}
         </Text>
       </View>
@@ -53,9 +80,13 @@ export function UserAvatar({ avatarUrl, name, size = 40 }: UserAvatarProps) {
   return (
     <View
       style={{ width: size, height: size, borderRadius: size / 2 }}
-      className="bg-surface-container-high items-center justify-center border border-outline-variant/40"
+      className="bg-surface-container-high items-center justify-center border border-outline-variant/40 overflow-hidden"
     >
-      <MaterialCommunityIcons name="account" size={size * 0.6} color={theme.textSecondary} />
+      <MaterialCommunityIcons
+        name="account"
+        size={Math.round(size * 0.78)}
+        color={theme.textSecondary}
+      />
     </View>
   );
 }

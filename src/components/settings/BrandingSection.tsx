@@ -336,6 +336,7 @@ export function BrandingSection({
           <View
             style={{
               backgroundColor: previewCardBg,
+              borderColor: previewBorder,
             }}
             className="rounded-xl p-3 border"
           >

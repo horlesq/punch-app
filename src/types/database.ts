@@ -169,6 +169,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
           full_name: string
           hourly_rate: number | null
@@ -178,6 +179,7 @@ export type Database = {
           role: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           full_name: string
           hourly_rate?: number | null
@@ -187,6 +189,7 @@ export type Database = {
           role: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           full_name?: string
           hourly_rate?: number | null

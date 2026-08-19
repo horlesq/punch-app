@@ -172,8 +172,8 @@ export default function LoginScreen() {
             </View>
 
             {/* Options Row */}
-            <View className="flex-row justify-between items-center mt-6 mb-8">
-              <Pressable className="flex-row items-center" onPress={() => setRememberMe(!rememberMe)}>
+            <View className="flex-row justify-between items-center flex-wrap gap-3 mt-6 mb-8">
+              <Pressable className="flex-row items-center mr-2" onPress={() => setRememberMe(!rememberMe)}>
                 <View
                   style={rememberMe ? { backgroundColor: theme.primary, borderColor: theme.primary } : { borderColor: theme.borderLight }}
                   className={`w-5 h-5 border items-center justify-center mr-3 rounded-sm ${rememberMe ? '' : 'bg-transparent'}`}
@@ -220,8 +220,8 @@ export default function LoginScreen() {
           </View>
 
           {/* Footer */}
-          <View className="items-center mt-10">
-            <Text style={{ color: theme.textSecondary }} className="text-body-md">
+          <View className="items-center mt-8 px-2">
+            <Text style={{ color: theme.textSecondary }} className="text-center font-geist-medium text-xs sm:text-sm">
               {t('auth.login.noAccount')}{' '}
               <Text style={{ color: theme.accent }} className="font-geist-bold">{t('auth.login.contactAdmin')}</Text>
             </Text>

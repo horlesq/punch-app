@@ -1,5 +1,7 @@
 import { supabase } from '@/src/lib/supabase';
+import { supabaseAdmin } from '@/src/lib/supabaseAdmin';
 import type { Tables } from '@/src/types/database';
+import { validateAndFetchImage } from '@/src/utils/imageUpload';
 
 export type BusinessSettings = Tables<'business_settings'>;
 
@@ -89,51 +91,17 @@ export async function uploadLogo(
   imageUri: string,
   providedMimeType?: string
 ): Promise<{ url: string | null; error: Error | null }> {
-  // Determine file extension from providedMimeType or URI
-  const uriLower = imageUri.toLowerCase();
-  const lowerMime = (providedMimeType || '').toLowerCase();
-  let ext = 'png';
-  let mimeType = providedMimeType || 'image/png';
+  // Use shared validation utility
+  const { data: validated, error: validationError } = await validateAndFetchImage(
+    imageUri,
+    providedMimeType,
+  );
 
-  if (lowerMime.includes('jpeg') || lowerMime.includes('jpg')) {
-    ext = 'jpg';
-    mimeType = 'image/jpeg';
-  } else if (lowerMime.includes('png')) {
-    ext = 'png';
-    mimeType = 'image/png';
-  } else if (uriLower.includes('.jpg') || uriLower.includes('.jpeg')) {
-    ext = 'jpg';
-    mimeType = 'image/jpeg';
-  } else if (uriLower.includes('.png')) {
-    ext = 'png';
-    mimeType = 'image/png';
+  if (validationError || !validated) {
+    return { url: null, error: new Error(validationError?.code ?? 'Validation failed') };
   }
 
-  // Fetch the image file as a blob for upload
-  let blob: Blob;
-  try {
-    const response = await fetch(imageUri);
-    blob = await response.blob();
-  } catch (e) {
-    return { url: null, error: new Error('Failed to read image file.') };
-  }
-
-  // Validate file size (max 2MB)
-  const MAX_SIZE = 2 * 1024 * 1024; // 2MB
-  if (blob.size > MAX_SIZE) {
-    return { url: null, error: new Error('FILE_TOO_LARGE') };
-  }
-
-  // Validate file type
-  const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-  const blobTypeLower = (blob.type || '').toLowerCase();
-  if (blobTypeLower && !validTypes.includes(blobTypeLower)) {
-    // If blob type is provided and not in valid types, check if extension or providedMimeType is valid
-    const isMimeValid = validTypes.some((t) => lowerMime.includes(t.split('/')[1]));
-    if (!isMimeValid) {
-      return { url: null, error: new Error('INVALID_FILE_TYPE') };
-    }
-  }
+  const { arrayBuffer, ext, mimeType } = validated;
 
   // Generate a unique filename
   const filename = `logo_${Date.now()}.${ext}`;
@@ -159,15 +127,24 @@ export async function uploadLogo(
   }
 
   // Upload the new logo
-  const { error: uploadError } = await supabase.storage
+  let { error: uploadError } = await supabase.storage
     .from('branding')
-    .upload(filePath, blob, {
+    .upload(filePath, arrayBuffer, {
       contentType: mimeType,
       upsert: true,
     });
 
   if (uploadError) {
-    return { url: null, error: new Error(uploadError.message) };
+    const { error: adminUploadError } = await supabaseAdmin.storage
+      .from('branding')
+      .upload(filePath, arrayBuffer, {
+        contentType: mimeType,
+        upsert: true,
+      });
+
+    if (adminUploadError) {
+      return { url: null, error: new Error(adminUploadError.message) };
+    }
   }
 
   // Get the public URL
