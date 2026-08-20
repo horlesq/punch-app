@@ -176,6 +176,9 @@ export function getAvailableLocales(): Array<{ code: string; label: string; flag
   return [
     { code: 'en', label: 'English' },
     { code: 'ro', label: 'Română' },
+    { code: 'es', label: 'Español' },
+    { code: 'fr', label: 'Français' },
+    { code: 'de', label: 'Deutsch' },
   ];
 }
 
