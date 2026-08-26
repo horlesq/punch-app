@@ -268,7 +268,7 @@ export default function PunchScreen() {
           {recentPunches.length === 0 ? (
             <View className="p-8 items-center">
               <Text style={{ color: theme.textSecondary }} className="font-inter text-sm">
-                No recent activity
+                {t('punch.noRecentActivity')}
               </Text>
             </View>
           ) : (

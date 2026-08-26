@@ -65,11 +65,12 @@ not required for the app to function.
 cp .env.example .env
 ```
 
-Open `.env` and paste in the `API URL` and `anon key` from the `supabase start` output:
+Open `.env` and paste in the `API URL` and `anon key` (plus the `service_role key` for admin functions) from the `supabase start` output:
 
 ```
 EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
 EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ```
 
 ### 5. Run migrations
@@ -90,6 +91,13 @@ npx expo start
 Scan the QR code with Expo Go on your phone, or press `i` / `a` in the terminal to launch
 the iOS Simulator / Android Emulator.
 
+## Testing
+
+Run the test suite (currently focuses on pure business logic in `payCalculations.ts`):
+```bash
+npx jest
+```
+
 ## Project Structure
 
 See `ARCHITECTURE.md` in `/project-docs` for the full breakdown and the reasoning behind it.
@@ -103,8 +111,7 @@ Short version:
 
 ## Contributing
 
-Coming in a later phase — see `ROADMAP.md` Phase 6 for what's planned (CONTRIBUTING.md,
-license, language-addition guide).
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to add languages, how to structure new features, and the coding conventions for this project.
 
 ## Deploying for a Business (self-hosting)
 

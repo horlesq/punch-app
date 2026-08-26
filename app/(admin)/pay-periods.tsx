@@ -330,7 +330,14 @@ export default function PayPeriodsScreen() {
           <Text style={{ color: theme.success }} className="text-center text-sm mb-2 mx-4">{successMessage}</Text>
         )}
         {errorMessage && (
-          <Text style={{ color: theme.error }} className="text-center text-sm mb-2 mx-4">{errorMessage}</Text>
+          <View className="mb-4 mx-4 items-center mt-2">
+            <Text style={{ color: theme.error }} className="text-center text-sm mb-2">{errorMessage}</Text>
+            <Pressable onPress={loadData} className="active:opacity-70 bg-surfaceVariant px-4 py-2 rounded-lg">
+              <Text style={{ color: theme.accent }} className="font-geist-semibold">
+                {t('common.retry')}
+              </Text>
+            </Pressable>
+          </View>
         )}
 
         {/* Employee Pay Table */}

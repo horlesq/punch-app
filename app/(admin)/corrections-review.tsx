@@ -69,7 +69,13 @@ export default function CorrectionsReviewScreen() {
         'punch_correction',
         correction.id,
         { status: 'pending' },
-        { status: 'approved' },
+        { 
+          status: 'approved', 
+          employee_id: correction.employee_id,
+          requested_clock_in_at: correction.requested_clock_in_at,
+          requested_clock_out_at: correction.requested_clock_out_at,
+          punch_id: correction.punch_id,
+        },
       );
 
       // Remove from list
@@ -99,7 +105,13 @@ export default function CorrectionsReviewScreen() {
         'punch_correction',
         correction.id,
         { status: 'pending' },
-        { status: 'rejected' },
+        { 
+          status: 'rejected', 
+          employee_id: correction.employee_id,
+          requested_clock_in_at: correction.requested_clock_in_at,
+          requested_clock_out_at: correction.requested_clock_out_at,
+          punch_id: correction.punch_id,
+        },
       );
 
       // Remove from list
@@ -155,7 +167,14 @@ export default function CorrectionsReviewScreen() {
       </Text>
 
       {errorMessage && (
-        <Text style={{ color: theme.error }} className="text-center text-sm mb-4 mx-4">{errorMessage}</Text>
+        <View className="mb-4 mx-4 items-center">
+          <Text style={{ color: theme.error }} className="text-center text-sm mb-2">{errorMessage}</Text>
+          <Pressable onPress={loadData} className="active:opacity-70 bg-surfaceVariant px-4 py-2 rounded-lg">
+            <Text style={{ color: theme.accent }} className="font-geist-semibold">
+              {t('common.retry')}
+            </Text>
+          </Pressable>
+        </View>
       )}
 
       {corrections.length === 0 ? (

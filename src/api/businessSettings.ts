@@ -89,12 +89,14 @@ export async function updateRules(
  */
 export async function uploadLogo(
   imageUri: string,
-  providedMimeType?: string
+  providedMimeType?: string,
+  base64Data?: string,
 ): Promise<{ url: string | null; error: Error | null }> {
   // Use shared validation utility
   const { data: validated, error: validationError } = await validateAndFetchImage(
     imageUri,
     providedMimeType,
+    base64Data,
   );
 
   if (validationError || !validated) {

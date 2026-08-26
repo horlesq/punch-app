@@ -142,6 +142,7 @@ export default function SettingsScreen() {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
+      base64: true,
     });
 
     if (result.canceled || !result.assets || result.assets.length === 0) {
@@ -170,7 +171,7 @@ export default function SettingsScreen() {
     setIsUploadingLogo(true);
     setBrandingErrorMsg(null);
 
-    const { url, error } = await uploadLogo(uri, asset.mimeType);
+    const { url, error } = await uploadLogo(uri, asset.mimeType ?? undefined, asset.base64 ?? undefined);
 
     setIsUploadingLogo(false);
 

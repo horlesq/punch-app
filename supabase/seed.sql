@@ -130,3 +130,42 @@ insert into auth.identities (
 update public.profiles
 set role = 'employee', full_name = 'John Employee', hourly_rate = 20.00
 where id = 'e0000000-0000-0000-0000-000000000001';
+
+-- 4. Demo Punches (Last few days)
+-- We use a DO block to generate timestamps relative to NOW() so they always look fresh
+DO $$
+DECLARE
+  emp_id uuid := 'e0000000-0000-0000-0000-000000000001';
+  admin_id uuid := 'a0000000-0000-0000-0000-000000000001';
+  punch_1_in timestamptz := (now() - interval '2 days')::date + interval '9 hours';
+  punch_1_out timestamptz := punch_1_in + interval '8 hours';
+  punch_2_in timestamptz := (now() - interval '1 day')::date + interval '8 hours 30 minutes';
+  punch_2_out timestamptz := punch_2_in + interval '8.5 hours';
+BEGIN
+  insert into public.punches (employee_id, clock_in_at, clock_out_at, source, status)
+  values 
+    (emp_id, punch_1_in, punch_1_out, 'live', 'approved'),
+    (emp_id, punch_2_in, punch_2_out, 'live', 'approved');
+
+  -- 5. Audit Log Entries
+  insert into public.audit_log (actor_id, action, entity_type, entity_id, old_value, new_value, created_at)
+  values 
+    (
+      admin_id, 
+      'rate_changed', 
+      'profile', 
+      emp_id, 
+      '{"hourly_rate": 15.00}', 
+      '{"hourly_rate": 20.00}',
+      now() - interval '3 days'
+    ),
+    (
+      admin_id, 
+      'name_changed', 
+      'profile', 
+      emp_id, 
+      '{"full_name": "Johnny Employee"}', 
+      '{"full_name": "John Employee"}',
+      now() - interval '3 days'
+    );
+END $$;

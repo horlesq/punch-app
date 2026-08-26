@@ -10,6 +10,7 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { ColorPicker } from './ColorPicker';
+import { AppLogo } from '@/src/components/ui/AppLogo';
 import {
   DARK_ACCENT_PRESETS,
   DARK_NEUTRAL_BACKGROUND,
@@ -349,18 +350,8 @@ export function BrandingSection({
                   onError={() => setPreviewLogoError(true)}
                 />
               ) : (
-                <View
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 14,
-                    backgroundColor: primaryColor,
-                  }}
-                  className="mr-2 items-center justify-center"
-                >
-                  <Text style={{ color: '#ffffff' }} className="text-xs font-geist-bold">
-                    {(businessName || 'P')[0].toUpperCase()}
-                  </Text>
+                <View className="mr-2">
+                  <AppLogo size={28} clockColor={previewTextPrimary} pillColor={accentColor} />
                 </View>
               )}
               <Text

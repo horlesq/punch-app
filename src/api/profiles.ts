@@ -169,6 +169,48 @@ export async function uploadAvatar(
 }
 
 /**
+ * Remove the user's avatar — deletes files from Storage and sets avatar_url to null.
+ */
+export async function removeAvatar(
+  userId: string,
+): Promise<{ error: Error | null }> {
+  // 1. Delete all avatar files from Storage
+  try {
+    const { data: existingFiles } = await supabase.storage
+      .from('avatars')
+      .list(userId, { limit: 100 });
+
+    if (existingFiles && existingFiles.length > 0) {
+      const avatarFiles = existingFiles
+        .filter((f) => f.name.startsWith('avatar_'))
+        .map((f) => `${userId}/${f.name}`);
+
+      if (avatarFiles.length > 0) {
+        await supabase.storage.from('avatars').remove(avatarFiles);
+      }
+    }
+  } catch {
+    // Non-critical — proceed to clear the URL even if storage cleanup fails
+  }
+
+  // 2. Set avatar_url to null in the profile
+  const { error } = await updateAvatarUrl(userId, null);
+  if (error) {
+    // Fallback to admin client
+    const { error: adminError } = await supabaseAdmin
+      .from('profiles')
+      .update({ avatar_url: null })
+      .eq('id', userId);
+
+    if (adminError) {
+      return { error: new Error(adminError.message) };
+    }
+  }
+
+  return { error: null };
+}
+
+/**
  * Get the list of available locales for the language picker.
  * Driven by what's registered in i18n config, not hardcoded in the component.
  */

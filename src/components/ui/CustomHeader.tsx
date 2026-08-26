@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useAuth } from '@/app/_layout';
 import { useTheme } from '@/src/theme/ThemeProvider';
 import { UserAvatar } from '@/src/components/ui/UserAvatar';
+import { AppLogo } from '@/src/components/ui/AppLogo';
 
 type CustomHeaderProps = {
   title?: string;
@@ -50,12 +50,7 @@ export function CustomHeader({ title }: CustomHeaderProps) {
             onError={() => setLogoError(true)}
           />
         ) : (
-          <View
-            style={{ backgroundColor: theme.primary }}
-            className="w-8 h-8 rounded-full items-center justify-center"
-          >
-            <MaterialCommunityIcons name="briefcase" size={18} color="#ffffff" />
-          </View>
+          <AppLogo size={32} />
         )}
         <Text
           style={{ color: theme.textPrimary }}

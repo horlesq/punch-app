@@ -56,15 +56,20 @@ integration issues (Supabase config, Expo setup, auth) early, while they're chea
 - [x] User Profile screens (Employee & Admin) with Avatar upload (Supabase Storage)
 - [x] Account settings (Change Email, Password, Language Modals)
 
-## Phase 6 — Polish & Open-Source Readiness
-- [ ] Audit log viewer (admin-facing, simple list)
-- [ ] Empty states, loading states, error handling pass across all screens
-- [ ] README: setup instructions for self-hosting (Supabase + Expo build steps)
-- [ ] CONTRIBUTING.md: include a short "Adding a new language" section (add
-  `/src/locales/<code>.json`, register it in `i18n.ts` — no other code changes needed)
-- [ ] Seed script / demo data for new deployments
-- [ ] Basic test coverage on `payCalculations.ts` (break deduction, pay math edge cases)
-- [ ] LICENSE file, CONTRIBUTING.md
+### Phase 6: Polish & Open-Source Readiness (Complete)
+- [x] Create `Logs` screen in admin tab to view `audit_log`
+- [x] Full UI polish pass: ensure every screen has a Loading Skeleton, an Empty State (if applicable), and an Error State.
+- [x] Minimal documentation pass (README, CONTRIBUTING, adding seed data)
+
+---
+
+### Phase 7: Post-v1 and Future Features
+- [ ] GPS/location verification
+- [ ] Overtime rules
+- [ ] Multi-tenant self-serve signup
+- [ ] Manager role
+- [ ] Push notifications
+- [ ] Payroll/tax integrations
 
 ## Explicitly Deferred (post-v1, not in current roadmap)
 - GPS/location verification

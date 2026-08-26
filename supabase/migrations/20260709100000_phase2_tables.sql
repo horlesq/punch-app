@@ -5,7 +5,7 @@
 -- ─── business_settings (single-row config) ──────────────────────────────────
 create table public.business_settings (
   id uuid primary key default gen_random_uuid(),
-  business_name text not null default 'My Business',
+  business_name text not null default 'PunchApp',
   logo_url text,
   primary_color text not null default '#0F172A',
   accent_color text,
@@ -50,7 +50,7 @@ insert into public.business_settings (
   correction_approval_mode,
   timezone
 ) values (
-  'My Business',
+  'PunchApp',
   '#0F172A',
   4,
   60,

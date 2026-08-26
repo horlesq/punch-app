@@ -535,3 +535,45 @@ export function SettingsSkeleton() {
     </View>
   );
 }
+
+/** Skeleton placeholder for Admin Logs screen (logs.tsx). */
+export function LogsSkeleton() {
+  const { theme } = useTheme();
+  return (
+    <View style={{ backgroundColor: theme.background }} className="flex-1 pt-4">
+      {/* Filter Bar */}
+      <View className="flex-row justify-between items-center mx-4 mb-4">
+        <Skeleton width={180} height={24} borderRadius={8} />
+        <Skeleton width={40} height={40} borderRadius={20} />
+      </View>
+
+      {/* Log Entries */}
+      {[1, 2, 3, 4, 5].map((key) => (
+        <View
+          key={key}
+          style={{
+            backgroundColor: theme.surfaceContainerLowest,
+            borderColor: theme.borderLight + '40',
+            borderWidth: 1,
+          }}
+          className="rounded-xl mx-4 mb-3 p-4"
+        >
+          {/* Header Row: Actor Name & Time */}
+          <View className="flex-row justify-between items-center mb-3">
+            <View className="flex-row items-center">
+              <Skeleton width={20} height={20} borderRadius={10} className="mr-2" />
+              <Skeleton width={110} height={16} borderRadius={6} />
+            </View>
+            <Skeleton width={60} height={14} borderRadius={4} />
+          </View>
+
+          {/* Action & Entity Details */}
+          <View className="pl-7">
+            <Skeleton width={140} height={14} borderRadius={5} className="mb-2" />
+            <Skeleton width={90} height={12} borderRadius={4} />
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}

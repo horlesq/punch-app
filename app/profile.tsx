@@ -18,6 +18,7 @@ import {
   getAvailableLocales,
   updateProfileLocale,
   uploadAvatar,
+  removeAvatar,
 } from '@/src/api/profiles';
 import { UserAvatar } from '@/src/components/ui/UserAvatar';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
@@ -104,6 +105,21 @@ export default function ProfileScreen() {
     } finally {
       setIsUploading(false);
     }
+  }
+
+  /** Remove avatar and revert to default icon */
+  async function handleRemoveAvatar() {
+    if (!profile) return;
+    setIsUploading(true);
+    setStatusMessage(null);
+
+    const { error } = await removeAvatar(profile.id);
+    if (error) {
+      setStatusMessage({ text: t('profile.avatarRemoveError'), isError: true });
+    } else {
+      await refreshProfile();
+    }
+    setIsUploading(false);
   }
 
   /** Change language and persist to Supabase profile */
@@ -260,11 +276,20 @@ export default function ProfileScreen() {
               )}
             </View>
           </Pressable>
-          <Pressable onPress={handlePickAvatar} disabled={isUploading} className="mt-2.5">
-            <Text style={{ color: theme.primary }} className="font-geist-medium text-xs">
-              {t('profile.changeAvatar')}
-            </Text>
-          </Pressable>
+          <View className="flex-row items-center gap-4 mt-2.5">
+            <Pressable onPress={handlePickAvatar} disabled={isUploading}>
+              <Text style={{ color: theme.primary }} className="font-geist-medium text-xs">
+                {t('profile.changeAvatar')}
+              </Text>
+            </Pressable>
+            {profile?.avatar_url && (
+              <Pressable onPress={handleRemoveAvatar} disabled={isUploading}>
+                <Text style={{ color: theme.error }} className="font-geist-medium text-xs">
+                  {t('profile.removeAvatar')}
+                </Text>
+              </Pressable>
+            )}
+          </View>
 
           {/* Display Name */}
           <Text

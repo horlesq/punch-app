@@ -14,6 +14,7 @@ import { useFocusEffect } from 'expo-router';
 
 import { signInWithEmail } from '@/src/api/auth';
 import { useTheme } from '@/src/theme/ThemeProvider';
+import { AppLogo } from '@/src/components/ui/AppLogo';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -92,11 +93,8 @@ export default function LoginScreen() {
                 onError={() => setLogoError(true)}
               />
             ) : (
-              <View
-                style={{ backgroundColor: theme.primary }}
-                className="w-16 h-16 rounded-full items-center justify-center mb-6"
-              >
-                <MaterialCommunityIcons name="briefcase" size={32} color="#ffffff" />
+              <View className="mb-6">
+                <AppLogo size={64} />
               </View>
             )}
             <Text style={{ color: theme.textPrimary }} className="text-headline-lg text-center mb-2">

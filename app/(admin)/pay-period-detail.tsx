@@ -256,7 +256,7 @@ export default function PayPeriodDetailScreen() {
         'pay_period',
         payPeriod.id,
         { locked: true },
-        { locked: false },
+        { locked: false, employee_id: payPeriod.employee_id },
       );
       setSuccessMessage(t('admin.payPeriodDetail.unlockSuccess'));
       await loadData();

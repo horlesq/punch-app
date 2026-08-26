@@ -62,18 +62,21 @@ export default function AdminLayout() {
         name="pay-periods"
         options={{
           title: t('tabs.admin.payPeriods'),
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cash" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="calendar-check" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="logs"
+        options={{
+          title: t('tabs.admin.logs'),
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="history" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: t('tabs.admin.settings'),
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cog-outline" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="cog" size={24} color={color} />,
         }}
       />
       {/* Hide screens that aren't primary tabs */}

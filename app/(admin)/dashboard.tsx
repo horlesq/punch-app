@@ -26,25 +26,26 @@ export default function DashboardScreen() {
   const [openPunches, setOpenPunches] = useState<PunchWithEmployee[]>([]);
   const [pendingCount, setPendingCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
+    setErrorMessage(null);
 
     const [punchesResult, countResult] = await Promise.all([
       getAllOpenPunches(),
       getPendingCorrectionsCount(),
     ]);
 
-    if (!punchesResult.error) {
-      setOpenPunches(punchesResult.data);
-    }
-
-    if (!countResult.error) {
-      setPendingCount(countResult.count);
+    if (punchesResult.error || countResult.error) {
+      setErrorMessage(t('common.somethingWentWrong'));
+    } else {
+      setOpenPunches(punchesResult.data || []);
+      setPendingCount(countResult.count || 0);
     }
 
     setIsLoading(false);
-  }, []);
+  }, [t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -76,6 +77,19 @@ export default function DashboardScreen() {
 
   if (isLoading) {
     return <DashboardSkeleton />;
+  }
+
+  if (errorMessage) {
+    return (
+      <View style={{ backgroundColor: theme.background }} className="flex-1 justify-center items-center px-6">
+        <Text style={{ color: theme.error }} className="text-center mb-4">{errorMessage}</Text>
+        <Pressable onPress={loadData} className="active:opacity-70">
+          <Text style={{ color: theme.accent }} className="font-geist-semibold">
+            {t('common.retry')}
+          </Text>
+        </Pressable>
+      </View>
+    );
   }
 
   return (
