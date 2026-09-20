@@ -66,7 +66,7 @@ export function CustomHeader({ title }: CustomHeaderProps) {
         onPress={() => router.push('/profile')}
         className="active:opacity-60 pt-4"
       >
-        <UserAvatar avatarUrl={profile?.avatar_url} name={profile?.full_name} role={profile?.role} size={32} />
+        <UserAvatar avatarUrl={profile?.avatar_url} name={profile?.full_name} role={profile?.role} size={36} />
       </Pressable>
     </View>
   );

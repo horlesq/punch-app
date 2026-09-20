@@ -45,6 +45,13 @@ export function UserAvatar({
           name="account-tie"
           size={Math.round(size * 1.15)}
           color={theme.primary}
+          // The glyph is larger than the circle, so flex centering is unreliable on iOS.
+          // Position it explicitly instead.
+          style={{
+            position: 'absolute',
+            left: (size - Math.round(size * 1.15)) / 2,
+            top: (size - Math.round(size * 1.15)) / 2,
+          }}
         />
       </View>
     );

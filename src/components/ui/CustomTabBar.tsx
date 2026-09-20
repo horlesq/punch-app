@@ -16,7 +16,8 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
       style={{
         flexDirection: 'row',
         backgroundColor: theme.surfaceContainerLowest,
-        paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+        // The home indicator only occupies the bottom ~13px of the inset, so don't reserve all of it.
+        paddingBottom: insets.bottom > 0 ? Math.max(insets.bottom - 12, 8) : 10,
         paddingTop: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -2 },
