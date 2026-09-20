@@ -264,7 +264,11 @@ export default function PayPeriodsScreen() {
   }
 
   if (isLoading) {
-    return <PayPeriodsSkeleton />;
+    return (
+      <ScreenWrapper scrollable={false}>
+        <PayPeriodsSkeleton />
+      </ScreenWrapper>
+    );
   }
 
   return (

@@ -26,6 +26,7 @@ import {
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
 import { Toast } from '@/src/components/ui/Toast';
 import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
+import { SettingsSkeleton } from '@/src/components/ui/Skeleton';
 import { BrandingSection } from '@/src/components/settings/BrandingSection';
 import { RulesSection } from '@/src/components/settings/RulesSection';
 import { isValidHex } from '@/src/components/settings/ReanimatedColorPickerWrapper';
@@ -277,7 +278,11 @@ export default function SettingsScreen() {
   }
 
   if (isLoading) {
-    return <SettingsSkeleton theme={theme} />;
+    return (
+      <ScreenWrapper scrollable={false}>
+        <SettingsSkeleton />
+      </ScreenWrapper>
+    );
   }
 
   const activeToast = brandingErrorMsg
@@ -362,20 +367,3 @@ export default function SettingsScreen() {
   );
 }
 
-function SettingsSkeleton({ theme }: { theme: any }) {
-  return (
-    <View
-      style={{ backgroundColor: theme.background }}
-      className="flex-1 p-4"
-    >
-      <View
-        style={{ backgroundColor: theme.surfaceContainerLowest }}
-        className="rounded-2xl p-4 mb-6 h-96 animate-pulse"
-      />
-      <View
-        style={{ backgroundColor: theme.surfaceContainerLowest }}
-        className="rounded-2xl p-4 h-64 animate-pulse"
-      />
-    </View>
-  );
-}

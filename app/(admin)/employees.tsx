@@ -49,7 +49,11 @@ export default function EmployeesScreen() {
   );
 
   if (isLoading) {
-    return <EmployeesSkeleton />;
+    return (
+      <ScreenWrapper scrollable={false}>
+        <EmployeesSkeleton />
+      </ScreenWrapper>
+    );
   }
 
   if (errorMessage) {

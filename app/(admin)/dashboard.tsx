@@ -76,7 +76,11 @@ export default function DashboardScreen() {
   }
 
   if (isLoading) {
-    return <DashboardSkeleton />;
+    return (
+      <ScreenWrapper scrollable={false}>
+        <DashboardSkeleton />
+      </ScreenWrapper>
+    );
   }
 
   if (errorMessage) {

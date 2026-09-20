@@ -256,7 +256,11 @@ export default function HistoryScreen() {
   }
 
   if (isLoading) {
-    return <HistorySkeleton />;
+    return (
+      <ScreenWrapper scrollable={false}>
+        <HistorySkeleton />
+      </ScreenWrapper>
+    );
   }
 
   if (errorMessage) {

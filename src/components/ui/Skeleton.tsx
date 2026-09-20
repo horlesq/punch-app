@@ -1,18 +1,61 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Animated,
+  DimensionValue,
+  Easing,
   LayoutChangeEvent,
   StyleProp,
-  StyleSheet,
   View,
   ViewStyle,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeProvider';
 
+/** Width of the travelling highlight band, in px. */
+const SHIMMER_WIDTH = 160;
+/** One sweep plus the rest that follows it, in ms. */
+const CYCLE_DURATION = 1600;
+/** Share of the cycle spent sweeping; the rest is a pause between passes. */
+const SWEEP_FRACTION = 0.7;
+
+/**
+ * Every Skeleton reads its highlight position from this one clock, so a screen
+ * full of blocks sweeps in unison instead of each running at its own speed and
+ * phase. Reference counted: the loop only runs while skeletons are mounted.
+ */
+const shimmerClock = new Animated.Value(0);
+let shimmerLoop: Animated.CompositeAnimation | null = null;
+let mountedCount = 0;
+
+function acquireShimmerClock() {
+  mountedCount += 1;
+  if (shimmerLoop) return;
+
+  shimmerClock.setValue(0);
+  shimmerLoop = Animated.loop(
+    Animated.timing(shimmerClock, {
+      toValue: 1,
+      duration: CYCLE_DURATION,
+      // A loop needs a linear ramp; the default ease stutters at every seam.
+      easing: Easing.linear,
+      useNativeDriver: true,
+    })
+  );
+  shimmerLoop.start();
+}
+
+function releaseShimmerClock() {
+  mountedCount = Math.max(0, mountedCount - 1);
+  if (mountedCount > 0) return;
+
+  shimmerLoop?.stop();
+  shimmerLoop = null;
+}
+
 interface SkeletonProps {
-  width?: number | string;
-  height?: number | string;
+  width?: DimensionValue;
+  height?: DimensionValue;
   borderRadius?: number;
   className?: string;
   style?: StyleProp<ViewStyle>;
@@ -20,7 +63,8 @@ interface SkeletonProps {
 
 /**
  * Premium Shimmer Skeleton Block.
- * Sweeps a smooth light gradient wave continuously across the element.
+ * Sweeps a smooth light gradient wave across the element, in step with every
+ * other block on screen.
  */
 export function Skeleton({
   width,
@@ -29,30 +73,27 @@ export function Skeleton({
   className = '',
   style,
 }: SkeletonProps) {
-  const [containerWidth, setContainerWidth] = useState<number>(200);
-  const translateX = useRef(new Animated.Value(-150)).current;
-
-  const onLayout = (e: LayoutChangeEvent) => {
-    const w = e.nativeEvent.layout.width;
-    if (w > 0) {
-      setContainerWidth(w);
-    }
-  };
+  const { theme } = useTheme();
+  const [containerWidth, setContainerWidth] = useState(0);
 
   useEffect(() => {
-    const animation = Animated.loop(
-      Animated.timing(translateX, {
-        toValue: containerWidth + 150,
-        duration: 1350,
-        useNativeDriver: true,
-      })
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [containerWidth, translateX]);
+    acquireShimmerClock();
+    return releaseShimmerClock;
+  }, []);
 
-  const { theme } = useTheme();
+  const onLayout = (e: LayoutChangeEvent) => {
+    const w = Math.round(e.nativeEvent.layout.width);
+    setContainerWidth((prev) => (prev === w ? prev : w));
+  };
+
   const isDark = theme.themeMode === 'dark';
+
+  // Enter from off the left edge, cross the block, then park off the right
+  // edge for the remainder of the cycle.
+  const translateX = shimmerClock.interpolate({
+    inputRange: [0, SWEEP_FRACTION, 1],
+    outputRange: [-SHIMMER_WIDTH, containerWidth, containerWidth],
+  });
 
   return (
     <View
@@ -60,42 +101,47 @@ export function Skeleton({
       className={`overflow-hidden relative ${className}`}
       style={[
         {
-          width: width as any,
-          height: height as any,
+          width,
+          height,
           borderRadius,
           backgroundColor: theme.surfaceVariant,
         },
         style,
       ]}
     >
-      <Animated.View
-        style={[
-          StyleSheet.absoluteFill,
-          {
-            width: 150,
+      {/* Held back until measured, so the first frame can't flash a
+          highlight at a guessed offset. */}
+      {containerWidth > 0 && (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: SHIMMER_WIDTH,
             transform: [{ translateX }],
-          },
-        ]}
-      >
-        <LinearGradient
-          colors={
-            isDark
-              ? [
-                  'rgba(255, 255, 255, 0)',
-                  'rgba(255, 255, 255, 0.12)',
-                  'rgba(255, 255, 255, 0)',
-                ]
-              : [
-                  'rgba(255, 255, 255, 0)',
-                  'rgba(255, 255, 255, 0.45)',
-                  'rgba(255, 255, 255, 0)',
-                ]
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={StyleSheet.absoluteFill}
-        />
-      </Animated.View>
+          }}
+        >
+          <LinearGradient
+            colors={
+              isDark
+                ? [
+                    'rgba(255, 255, 255, 0)',
+                    'rgba(255, 255, 255, 0.12)',
+                    'rgba(255, 255, 255, 0)',
+                  ]
+                : [
+                    'rgba(255, 255, 255, 0)',
+                    'rgba(255, 255, 255, 0.45)',
+                    'rgba(255, 255, 255, 0)',
+                  ]
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{ flex: 1 }}
+          />
+        </Animated.View>
+      )}
     </View>
   );
 }
@@ -316,8 +362,12 @@ export function EmployeesSkeleton() {
 /** Skeleton placeholder for Admin Employee Edit Detail screen (employee-detail.tsx). */
 export function EmployeeDetailSkeleton() {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
-    <View style={{ backgroundColor: theme.background }} className="flex-1 pt-4">
+    <View
+      style={{ backgroundColor: theme.background, paddingTop: insets.top + 16 }}
+      className="flex-1"
+    >
       {/* Header Profile Card Skeleton */}
       <View style={{ backgroundColor: theme.surfaceContainerLowest, borderColor: theme.borderLight + '40', borderWidth: 1 }} className="mx-4 p-5 rounded-2xl mb-6 items-center">
         <Skeleton width={72} height={72} borderRadius={36} className="mb-3" />
@@ -345,8 +395,12 @@ export function EmployeeDetailSkeleton() {
 /** Skeleton placeholder for Admin Corrections Review screen (corrections-review.tsx). */
 export function CorrectionsReviewSkeleton() {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
-    <View style={{ backgroundColor: theme.background }} className="flex-1 pt-4">
+    <View
+      style={{ backgroundColor: theme.background, paddingTop: insets.top + 16 }}
+      className="flex-1"
+    >
       {[1, 2].map((key) => (
         <View
           key={key}
@@ -440,8 +494,12 @@ export function PayPeriodsSkeleton() {
 /** Skeleton placeholder for employee detail shifts screen (pay-period-detail.tsx). */
 export function PayPeriodDetailSkeleton() {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
-    <View style={{ backgroundColor: theme.background }} className="flex-1 pt-4">
+    <View
+      style={{ backgroundColor: theme.background, paddingTop: insets.top + 16 }}
+      className="flex-1"
+    >
       {/* Header Info */}
       <View className="mx-4 mb-4">
         <Skeleton width={180} height={26} borderRadius={8} className="mb-2" />
@@ -483,8 +541,12 @@ export function PayPeriodDetailSkeleton() {
 
 /** Skeleton placeholder for initial app & profile boot loading. */
 export function RootAppSkeleton() {
+  const { theme } = useTheme();
   return (
-    <View className="flex-1 bg-surface items-center justify-center p-6">
+    <View
+      style={{ backgroundColor: theme.surface }}
+      className="flex-1 items-center justify-center p-6"
+    >
       <Skeleton width={72} height={72} borderRadius={36} className="mb-6" />
       <Skeleton width={180} height={24} borderRadius={8} className="mb-3" />
       <Skeleton width={120} height={14} borderRadius={6} />
@@ -494,12 +556,14 @@ export function RootAppSkeleton() {
 
 /** Skeleton placeholder for Admin Settings screen (settings.tsx). */
 export function SettingsSkeleton() {
+  const { theme } = useTheme();
+  const cardStyle = { backgroundColor: theme.surfaceContainerLowest };
   return (
-    <View className="flex-1 bg-background pt-4">
+    <View style={{ backgroundColor: theme.background }} className="flex-1 pt-4">
       {/* Branding Section Header */}
       <View className="mx-4 mb-4">
         <Skeleton width={120} height={20} borderRadius={6} className="mb-3" />
-        <View className="bg-surface-container-lowest rounded-2xl p-5">
+        <View style={cardStyle} className="rounded-2xl p-5">
           <Skeleton width={100} height={14} borderRadius={4} className="mb-2" />
           <Skeleton width="100%" height={44} borderRadius={12} className="mb-5" />
           <Skeleton width={60} height={14} borderRadius={4} className="mb-2.5" />
@@ -520,7 +584,7 @@ export function SettingsSkeleton() {
       {/* Rules Section Header */}
       <View className="mx-4">
         <Skeleton width={130} height={20} borderRadius={6} className="mb-3" />
-        <View className="bg-surface-container-lowest rounded-2xl p-5">
+        <View style={cardStyle} className="rounded-2xl p-5">
           <View className="flex-row items-center justify-between mb-5">
             <Skeleton width={120} height={14} borderRadius={4} />
             <Skeleton width={80} height={40} borderRadius={12} />

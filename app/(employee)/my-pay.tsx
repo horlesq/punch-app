@@ -228,7 +228,11 @@ export default function MyPayScreen() {
   }
 
   if (isLoading) {
-    return <MyPaySkeleton />;
+    return (
+      <ScreenWrapper scrollable={false}>
+        <MyPaySkeleton />
+      </ScreenWrapper>
+    );
   }
 
   if (errorMessage) {

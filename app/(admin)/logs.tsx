@@ -209,7 +209,11 @@ export default function LogsScreen() {
   }
 
   if (isLoading) {
-    return <LogsSkeleton />;
+    return (
+      <ScreenWrapper scrollable={false}>
+        <LogsSkeleton />
+      </ScreenWrapper>
+    );
   }
 
   if (errorMessage) {

@@ -166,7 +166,11 @@ export default function PunchScreen() {
   }
 
   if (isLoading && !openPunch && recentPunches.length === 0) {
-    return <PunchSkeleton />;
+    return (
+      <ScreenWrapper scrollable={false}>
+        <PunchSkeleton />
+      </ScreenWrapper>
+    );
   }
 
   return (
