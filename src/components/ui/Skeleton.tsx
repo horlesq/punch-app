@@ -70,7 +70,7 @@ export function Skeleton({
     >
       <Animated.View
         style={[
-          StyleSheet.absoluteFillObject,
+          StyleSheet.absoluteFill,
           {
             width: 150,
             transform: [{ translateX }],
