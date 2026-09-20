@@ -29,6 +29,7 @@ import {
 } from '@/src/utils/payCalculations';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
 import { PayPeriodDetailSkeleton } from '@/src/components/ui/Skeleton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /** Format a date as YYYY-MM-DD. */
 function toDateString(date: Date): string {
@@ -90,6 +91,7 @@ interface ShiftRow {
 }
 
 export default function PayPeriodDetailScreen() {
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { employeeId, weekStart } = useLocalSearchParams<{
@@ -298,7 +300,7 @@ export default function PayPeriodDetailScreen() {
     <ScrollView
       style={{ backgroundColor: theme.background }}
       className="flex-1"
-      contentContainerStyle={{ paddingTop: 16, paddingBottom: 32 }}
+      contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: 32 }}
     >
       {/* Header: Employee name + week range */}
       <View className="mx-4 mb-4 flex-row items-center justify-between">

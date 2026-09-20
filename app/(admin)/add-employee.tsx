@@ -18,8 +18,10 @@ import { useTheme } from '@/src/theme/ThemeProvider';
 import { createEmployee } from '@/src/api/profiles';
 import { writeAuditEntry } from '@/src/api/auditLog';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AddEmployeeScreen() {
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const router = useRouter();
@@ -106,7 +108,7 @@ export default function AddEmployeeScreen() {
       <ScrollView
         style={{ backgroundColor: theme.background }}
         className="flex-1"
-        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+        contentContainerStyle={{ padding: 16, paddingTop: insets.top + 16, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
       >
         <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-2xl mb-6">

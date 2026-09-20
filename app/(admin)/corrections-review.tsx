@@ -21,8 +21,10 @@ import {
 } from '@/src/api/corrections';
 import { writeAuditEntry } from '@/src/api/auditLog';
 import { CorrectionsReviewSkeleton } from '@/src/components/ui/Skeleton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CorrectionsReviewScreen() {
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { profile: adminProfile } = useAuth();
   const { theme } = useTheme();
@@ -160,7 +162,7 @@ export default function CorrectionsReviewScreen() {
     <ScrollView
       style={{ backgroundColor: theme.background }}
       className="flex-1"
-      contentContainerStyle={{ paddingTop: 16, paddingBottom: 32 }}
+      contentContainerStyle={{ paddingTop: insets.top + 16, paddingBottom: 32 }}
     >
       <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-2xl mb-6 mx-4">
         {t('admin.corrections.title')}

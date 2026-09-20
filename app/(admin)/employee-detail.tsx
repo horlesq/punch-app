@@ -20,8 +20,10 @@ import { getPendingCorrections } from '@/src/api/corrections';
 import { writeAuditEntry } from '@/src/api/auditLog';
 import { ConfirmModal } from '@/src/components/ui/ConfirmModal';
 import { EmployeeDetailSkeleton } from '@/src/components/ui/Skeleton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function EmployeeDetailScreen() {
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const router = useRouter();
@@ -181,7 +183,7 @@ export default function EmployeeDetailScreen() {
     <ScrollView
       style={{ backgroundColor: theme.background }}
       className="flex-1"
-      contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+      contentContainerStyle={{ padding: 16, paddingTop: insets.top + 16, paddingBottom: 40 }}
     >
       <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-2xl mb-6">
         {t('admin.employeeDetail.title')}
