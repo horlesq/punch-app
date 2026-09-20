@@ -6,6 +6,7 @@ export type Punch = Tables<'punches'>;
 /** A punch joined with the employee's full_name for admin views. */
 export interface PunchWithEmployee extends Punch {
   employee_name: string;
+  avatar_url?: string | null;
 }
 
 /**
@@ -104,7 +105,7 @@ export async function getAllOpenPunches(): Promise<{
 }> {
   const { data, error } = await supabase
     .from('punches')
-    .select('*, profiles!punches_employee_id_fkey(full_name)')
+    .select('*, profiles!punches_employee_id_fkey(full_name, avatar_url)')
     .is('clock_out_at', null)
     .order('clock_in_at', { ascending: true });
 
@@ -116,6 +117,7 @@ export async function getAllOpenPunches(): Promise<{
   const result: PunchWithEmployee[] = (data ?? []).map((row: any) => ({
     ...row,
     employee_name: row.profiles?.full_name ?? '',
+    avatar_url: row.profiles?.avatar_url ?? null,
     profiles: undefined,
   }));
 

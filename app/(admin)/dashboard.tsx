@@ -17,6 +17,7 @@ import { getAllOpenPunches, type PunchWithEmployee } from '@/src/api/punches';
 import { getPendingCorrectionsCount } from '@/src/api/corrections';
 import { DashboardSkeleton } from '@/src/components/ui/Skeleton';
 import { ScreenWrapper } from '@/src/components/ui/ScreenWrapper';
+import { UserAvatar } from '@/src/components/ui/UserAvatar';
 
 export default function DashboardScreen() {
   const { t } = useTranslation();
@@ -143,8 +144,8 @@ export default function DashboardScreen() {
                 className="flex-row items-center justify-between p-4"
               >
                 <View className="flex-row items-center flex-1">
-                  <View className="w-10 h-10 rounded-full bg-success/15 justify-center items-center mr-3">
-                    <MaterialCommunityIcons name="account" size={20} color={theme.success} />
+                  <View className="mr-3">
+                    <UserAvatar avatarUrl={punch.avatar_url} size={40} name={punch.employee_name} role="employee" />
                   </View>
                   <View>
                     <Text style={{ color: theme.textPrimary }} className="font-geist-semibold text-[15px]">
